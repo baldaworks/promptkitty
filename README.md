@@ -1,78 +1,52 @@
+<div align="center">
+
 # PromptKitty
 
-Embedded PromptKit catalog and deterministic prompt assembler for Go.
+**PromptKit, packaged for Go.**
 
-PromptKitty packages a pinned component snapshot from Microsoft PromptKit into
-a Go module. It loads no files and makes no network calls at runtime.
-Applications can browse personas, protocols, formats, taxonomies, templates,
-and pipelines, then assemble a fully parameterized prompt. The exact upstream
-ref, resolved commit, and SHA-256 inventory live in `content/upstream.json`.
+Browse, compose, and assemble a pinned Microsoft PromptKit catalog from a
+standalone command or a deterministic, offline Go library.
 
-## Install
+[![Go Reference](https://pkg.go.dev/badge/github.com/baldaworks/promptkitty.svg)](https://pkg.go.dev/github.com/baldaworks/promptkitty)
+[![Test](https://github.com/baldaworks/promptkitty/actions/workflows/test.yml/badge.svg)](https://github.com/baldaworks/promptkitty/actions/workflows/test.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Install the library or standalone CLI:
+[Command](#command) ·
+[Library](#library) ·
+[Original PromptKit](https://github.com/microsoft/PromptKit) ·
+[License](#license)
+
+</div>
+
+PromptKitty embeds Microsoft PromptKit `v0.6.1`: personas, protocols, formats,
+taxonomies, templates, and pipelines. Runtime use reads no external files,
+makes no network calls, and resolves every declared template parameter before
+rendering.
+
+## Why PromptKitty?
+
+- **Two integration surfaces** — use the standalone command, mount its reusable
+  Cobra command tree, or call the root Go package directly.
+- **Deterministic assembly** — the same catalog and inputs produce the same
+  prompt.
+- **Offline runtime** — every PromptKit component is compiled into the binary.
+- **Strict parameters** — missing inputs are errors; empty strings remain
+  explicit values.
+- **Verifiable snapshot** — the upstream ref, resolved commit, license, and
+  SHA-256 inventory are pinned in [`content/upstream.json`](content/upstream.json).
+
+## Command
+
+Install the standalone command:
 
 ```bash
-go get github.com/baldaworks/promptkitty@v0.2.1
 go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.2.1
 ```
 
-## Assemble a prompt
-
-```go
-library, err := promptkitty.New()
-if err != nil {
-    return err
-}
-
-result, err := library.Assemble(promptkitty.AssembleRequest{
-    Template: "investigate-bug",
-    Params: map[string]string{
-        "problem_description": "Parser crashes on empty input",
-        "code_context":        "src/parser.c",
-        "environment":         "Linux amd64",
-    },
-})
-if err != nil {
-    return err
-}
-
-fmt.Println(result.Markdown)
-```
-
-Every parameter declared by the selected template must be present. An empty
-string is an explicit value. Parameter substitution is one-pass and does not
-reinterpret mustache syntax supplied as input data.
-
-Composition follows PromptKit's semantic layers:
-
-```text
-persona → protocols → taxonomies → format → template
-```
-
-Use `Persona`, `AdditionalProtocols`, `AdditionalTaxonomies`, and `Format` on
-`AssembleRequest` to resolve configurable templates or extend their defaults.
-
-## Browse the catalog
-
-```go
-templates := library.List(promptkitty.Filter{Type: promptkitty.ComponentTemplate})
-security := library.Search("security", promptkitty.Filter{})
-review, err := library.Show("review-code")
-pipelines := library.Pipelines()
-```
-
-The reusable `cli` package exposes the same command tree for host applications:
-
-```go
-cmd := cli.NewCommand(cli.Options{Use: "promptkit"})
-host.AddCommand(cmd)
-```
-
-The standalone command supports `list`, `search`, `show`, and `assemble`:
+Browse the catalog and render prompts from a shell or automation:
 
 ```bash
-promptkitty list
+promptkitty list --type template
 promptkitty search security --type template
 promptkitty show review-code --json
 promptkitty assemble review-code \
@@ -83,28 +57,112 @@ promptkitty assemble review-code \
   --param context='small example'
 ```
 
-`assemble` writes rendered Markdown to stdout by default. Use `--output` to
-write a file or `--json` to receive the complete assembly result.
+`assemble` writes Markdown to stdout by default. Use `--output` to write a
+file, `--json` for the complete assembly result, and the repeatable `--param`,
+`--param-file`, `--protocol`, and `--taxonomy` flags for composition inputs.
 
-## Updating PromptKit content
+Host applications can mount the same command tree under their own Cobra root:
 
-The embedded snapshot is pinned by ref, resolved commit, and SHA-256 inventory
-in `content/upstream.json`. To update it, change only the `ref` field to the
-desired immutable PromptKit tag, then run:
+```go
+cmd := cli.NewCommand(cli.Options{Use: "promptkit"})
+host.AddCommand(cmd)
+```
+
+The reusable `cli` package keeps successful output on stdout and diagnostics on
+stderr, matching the standalone command.
+
+## Library
+
+Install the Go module:
+
+```bash
+go get github.com/baldaworks/promptkitty@v0.2.1
+```
+
+Create the embedded library and assemble a fully parameterized prompt:
+
+```go
+func assemble() error {
+    library, err := promptkitty.New()
+    if err != nil {
+        return fmt.Errorf("load PromptKit catalog: %w", err)
+    }
+
+    result, err := library.Assemble(promptkitty.AssembleRequest{
+        Template: "investigate-bug",
+        Params: map[string]string{
+            "problem_description": "Parser crashes on empty input",
+            "code_context":        "src/parser.c",
+            "environment":         "Linux amd64",
+        },
+    })
+    if err != nil {
+        return fmt.Errorf("assemble investigate-bug prompt: %w", err)
+    }
+
+    fmt.Println(result.Markdown)
+
+    return nil
+}
+```
+
+Parameter substitution is one-pass, so mustache syntax supplied as input stays
+data instead of becoming another template expression.
+
+### Browse the catalog
+
+```go
+templates := library.List(promptkitty.Filter{
+    Type: promptkitty.ComponentTemplate,
+})
+security := library.Search("security", promptkitty.Filter{})
+review, err := library.Show("review-code")
+pipelines := library.Pipelines()
+```
+
+Catalog results are returned in stable type, category, and name order. Use
+`NewFromFS` when tests or applications need a compatible private catalog
+instead of the embedded snapshot.
+
+### Compose semantic layers
+
+PromptKitty follows PromptKit's composition order:
+
+```text
+persona → protocols → taxonomies → format → template
+```
+
+Use `Persona`, `AdditionalProtocols`, `AdditionalTaxonomies`, and `Format` on
+`AssembleRequest` to replace configurable components or extend their defaults.
+
+## Updating the PromptKit snapshot
+
+Change only the `ref` field in [`content/upstream.json`](content/upstream.json)
+to the desired immutable PromptKit tag, then run:
 
 ```bash
 go generate ./...
 ```
 
-The generator resolves that ref through GitHub, downloads its archive, copies
-the supported Markdown components, manifest, and upstream `LICENSE`, then
-rewrites the resolved commit and all SHA-256 checksums. Review the content,
-license, and lock diff together. Runtime builds never contact GitHub.
+The generator resolves the ref through GitHub, downloads its archive, copies
+the supported components and upstream license, then rewrites the resolved
+commit and SHA-256 inventory. Review the content, license, and lock diff
+together. Runtime builds never contact GitHub.
+
+## About PromptKit
+
+[Microsoft PromptKit](https://github.com/microsoft/PromptKit) is a composable
+prompt engineering library organized around reusable personas, protocols,
+taxonomies, formats, templates, and pipelines. PromptKitty embeds the pinned
+upstream documents for Go consumers without reinterpreting their content.
 
 ## License
 
-PromptKitty's original Go code and documentation are distributed under the root
-MIT `LICENSE`, copyright Alexey Samoylov. The embedded Microsoft PromptKit
-content remains under Microsoft's MIT license and attribution; its exact
-license copy is refreshed by `go generate` and stored at
-`third_party/promptkit/LICENSE`. See `THIRD_PARTY_NOTICES.md`.
+PromptKitty's original Go code and documentation are available under the root
+[MIT License](LICENSE), copyright Alexey Samoylov.
+
+The embedded Microsoft PromptKit content remains under Microsoft's MIT license
+and attribution. Its exact license copy is stored at
+[`third_party/promptkit/LICENSE`](third_party/promptkit/LICENSE); see
+[`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for third-party terms and
+provenance.
