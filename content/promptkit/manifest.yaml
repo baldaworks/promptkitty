@@ -1,0 +1,1670 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) PromptKit Contributors
+
+# PromptKit — Manifest
+# This file indexes all components in the library.
+# The bootstrap prompt reads this manifest to discover available
+# personas, protocols, formats, and task templates.
+
+version: "0.6.1"
+
+personas:
+  - name: systems-engineer
+    path: personas/systems-engineer.md
+    description: >
+      Senior systems engineer. Deep expertise in memory management,
+      concurrency, performance, and debugging. Reasons from first principles.
+
+  - name: security-auditor
+    path: personas/security-auditor.md
+    description: >
+      Principal security engineer. Adversarial mindset. Specializes in
+      vulnerability discovery, threat modeling, and secure design.
+
+  - name: software-architect
+    path: personas/software-architect.md
+    description: >
+      Staff software architect. System design, API contracts, tradeoff
+      analysis, and long-term maintainability.
+
+  - name: promptkit-contributor
+    path: personas/promptkit-contributor.md
+    description: >
+      PromptKit contribution guide. Understands the library's architecture,
+      conventions, and quality standards. Guides contributors through
+      designing and building new components.
+
+  - name: devops-engineer
+    path: personas/devops-engineer.md
+    description: >
+      Senior DevOps / platform engineer. Deep expertise in CI/CD pipelines,
+      release engineering, infrastructure-as-code, and platform APIs across
+      GitHub Actions, Azure DevOps, GitLab CI, and other DevOps platforms.
+
+  - name: reverse-engineer
+    path: personas/reverse-engineer.md
+    description: >
+      Senior reverse engineer. Extracts specifications, contracts, and
+      behavioral requirements from existing implementations. Separates
+      essential behavior from implementation details.
+
+  - name: specification-analyst
+    path: personas/specification-analyst.md
+    description: >
+      Senior specification analyst. Cross-examines requirements, design,
+      and validation artifacts for consistency, completeness, and
+      traceability. Adversarial toward completeness claims.
+
+  - name: workflow-arbiter
+    path: personas/workflow-arbiter.md
+    description: >
+      Senior workflow arbiter. Evaluates multi-agent workflow progress,
+      detects livelock and bikeshedding, and decides whether a
+      coding/review/validation loop should continue or terminate.
+
+  - name: implementation-engineer
+    path: personas/implementation-engineer.md
+    description: >
+      Senior implementation engineer. Builds correct, maintainable code
+      from specifications. Traces every implementation decision back to
+      a requirement.
+
+  - name: test-engineer
+    path: personas/test-engineer.md
+    description: >
+      Senior test engineer. Writes thorough, specification-driven tests
+      that verify every requirement and acceptance criterion. Prioritizes
+      coverage breadth, negative cases, and boundary conditions.
+
+  - name: embedded-firmware-engineer
+    path: personas/embedded-firmware-engineer.md
+    description: >
+      Senior embedded firmware engineer. Deep expertise in boot sequences,
+      flash memory management, OTA updates, power-fail-safe operations,
+      watchdog timers, and device recovery mechanisms. Reasons about every
+      failure mode at every execution point.
+
+  - name: electrical-engineer
+    path: personas/electrical-engineer.md
+    description: >
+      Senior electrical engineer. Deep expertise in power delivery,
+      signal integrity, PCB design, component selection, and schematic
+      review. Thinks in voltage domains and current paths. Conservative
+      about datasheet margins.
+
+  - name: rf-engineer
+    path: personas/rf-engineer.md
+    description: >
+      Senior RF systems engineer. Deep expertise in link budget analysis,
+      antenna characterization, propagation modeling, transceiver design,
+      regulatory compliance, and RF test and measurement.
+
+  - name: mechanical-engineer
+    path: personas/mechanical-engineer.md
+    description: >
+      Senior mechanical engineer. Deep expertise in enclosure design
+      for electronics, 3D printing design-for-manufacturing, material
+      selection, thermal management, environmental protection, and
+      physical integration of PCB assemblies.
+
+  - name: protocol-architect
+    path: personas/protocol-architect.md
+    description: >
+      Senior protocol architect. Deep expertise in protocol design,
+      evolution, and formal specification. Reasons about state machines,
+      message formats, backward compatibility, and interoperability
+      across protocol layers.
+
+protocols:
+  guardrails:
+    - name: anti-hallucination
+      path: protocols/guardrails/anti-hallucination.md
+      description: >
+        Prevents fabrication. Enforces epistemic labeling (KNOWN/INFERRED/ASSUMED),
+        uncertainty disclosure, and source attribution. Apply to all tasks.
+
+    - name: self-verification
+      path: protocols/guardrails/self-verification.md
+      description: >
+        Quality gate requiring the LLM to verify its own output before finalizing.
+        Sampling checks, citation audits, coverage confirmation, consistency checks.
+
+    - name: operational-constraints
+      path: protocols/guardrails/operational-constraints.md
+      description: >
+        Governs how the LLM scopes work, uses tools, manages context, and
+        prefers deterministic analysis. Prevents over-ingestion and ensures
+        reproducibility.
+
+    - name: minimal-edit-discipline
+      path: protocols/guardrails/minimal-edit-discipline.md
+      description: >
+        Constrains code modifications to be minimal, type-preserving,
+        encoding-safe, and verifiable. Prevents collateral damage from
+        automated fixes, refactoring, and code generation.
+
+    - name: adversarial-falsification
+      path: protocols/guardrails/adversarial-falsification.md
+      description: >
+        Enforces adversarial self-falsification discipline. Requires the
+        reviewer to disprove every candidate finding before reporting it,
+        reject known-safe patterns, and resist premature summarization.
+
+  analysis:
+    - name: memory-safety-c
+      path: protocols/analysis/memory-safety-c.md
+      description: >
+        Memory safety analysis for C. Covers allocation/deallocation pairing,
+        pointer lifecycle, buffer boundaries, and undefined behavior.
+      language: C
+
+    - name: cpp-best-practices
+      path: protocols/analysis/cpp-best-practices.md
+      description: >
+        Research-validated C++ code review patterns based on academic
+        literature and industry standards. Covers memory safety, concurrency,
+        API design, performance, error handling, code clarity, and testing.
+      language: C++
+
+    - name: memory-safety-rust
+      path: protocols/analysis/memory-safety-rust.md
+      description: >
+        Memory safety analysis for Rust. Focuses on unsafe blocks, FFI
+        boundaries, interior mutability, and resource leaks.
+      language: Rust
+
+    - name: thread-safety
+      path: protocols/analysis/thread-safety.md
+      description: >
+        Concurrency analysis. Covers data races, deadlocks, atomicity
+        violations, and thread lifecycle. Language-agnostic.
+
+    - name: security-vulnerability
+      path: protocols/analysis/security-vulnerability.md
+      description: >
+        Security vulnerability analysis. Trust boundaries, input validation,
+        auth, crypto, and information disclosure. Language-agnostic.
+
+    - name: win32-api-conventions
+      path: protocols/analysis/win32-api-conventions.md
+      description: >
+        Win32 API conventions analysis. Covers function naming, struct and
+        enum typedefs, parameter ordering, modern data types, const-correctness,
+        Hungarian notation avoidance, and C compatibility of SDK headers.
+      language: C
+
+    - name: performance-critical-c-api
+      path: protocols/analysis/performance-critical-c-api.md
+      description: >
+        Code review patterns for performance-critical C API design. Covers
+        flat C API enforcement, caller-controlled memory, strongly-typed
+        handles, standard portable types, UTF-8 string handling, minimal API
+        surface, and specific error codes.
+      language: C
+
+    - name: winrt-design-patterns
+      path: protocols/analysis/winrt-design-patterns.md
+      description: >
+        Analysis protocol for reviewing Windows Runtime API code against
+        established WinRT design patterns. Covers activation contracts,
+        deferrals, data store separation, device enumeration, Get/Find
+        semantics, strongly-typed identifiers, and Try pattern.
+      language: C++
+
+    - name: compiler-diagnostics-cpp
+      path: protocols/analysis/compiler-diagnostics-cpp.md
+      description: >
+        Systematic protocol for analyzing and remediating C++ compiler
+        diagnostics. Covers variable shadowing, implicit conversions,
+        unused variables, deprecated features, and pragma suppression
+        handling with specific resolution strategies.
+      language: C++
+
+    - name: msvc-clang-portability
+      path: protocols/analysis/msvc-clang-portability.md
+      description: >
+        C++ cross-compiler portability analysis between MSVC and
+        Clang/GCC. Identifies MSVC extensions and non-standard patterns
+        that fail on standards-conforming compilers. Covers template
+        rules, const correctness, exception specs, dependent types,
+        implicit conversions, and deprecated features.
+      language: C++
+
+    - name: kernel-correctness
+      path: protocols/analysis/kernel-correctness.md
+      description: >
+        Correctness analysis for OS kernel and driver code. Lock/refcount
+        symmetry, cleanup path completeness, PFN/PTE state transitions,
+        interlocked sequences, charge/uncharge accounting, and known-safe
+        kernel pattern suppression.
+      language: C
+
+    - name: schematic-compliance-audit
+      path: protocols/analysis/schematic-compliance-audit.md
+      description: >
+        Systematic schematic review protocol. Audits a netlist or
+        schematic against requirements and datasheet specifications.
+        Covers power architecture, pin-level verification, bus
+        integrity, protection circuits, power sequencing, passive
+        components, and completeness.
+
+    - name: simulation-validation
+      path: protocols/analysis/simulation-validation.md
+      description: >
+        Systematic review of circuit simulation output (SPICE, power
+        budget, thermal analysis) against specification constraints.
+        Covers setup verification, result interpretation, constraint
+        compliance, corner-case coverage, and model validity.
+
+    - name: bom-consistency
+      path: protocols/analysis/bom-consistency.md
+      description: >
+        Systematic BOM review protocol. Audits a bill of materials
+        against the schematic and requirements for part number
+        correctness, voltage and temperature ratings, package matches,
+        cost compliance, sourcing risks, and completeness.
+
+    - name: layout-design-review
+      path: protocols/analysis/layout-design-review.md
+      description: >
+        Systematic PCB layout review protocol. Audits layout decisions
+        and DRC output against schematic intent and requirements.
+        Covers trace widths, impedance control, ground plane integrity,
+        component placement, thermal design, and manufacturing
+        constraints.
+
+    - name: link-budget-audit
+      path: protocols/analysis/link-budget-audit.md
+      description: >
+        Systematic link budget review protocol. Audits a wireless link
+        budget for transmitter chain, path loss model selection,
+        receiver chain, margin adequacy, regulatory compliance, and
+        sensitivity to environmental assumptions.
+
+    - name: enclosure-design-review
+      path: protocols/analysis/enclosure-design-review.md
+      description: >
+        Systematic enclosure design review protocol for electronic
+        assemblies. Audits for PCB fit, thermal management,
+        environmental protection, antenna compatibility, sensor
+        access, manufacturing feasibility, and mounting provisions.
+
+    - name: component-selection-audit
+      path: protocols/analysis/component-selection-audit.md
+      description: >
+        Adversarial audit of a component selection against requirements
+        and real-world data. Independently verifies part numbers exist,
+        datasheet specs match claims, sourcing data is current, and
+        compatibility assertions hold. Catches hallucinated parts and
+        stale specifications.
+
+  reasoning:
+    - name: root-cause-analysis
+      path: protocols/reasoning/root-cause-analysis.md
+      description: >
+        Systematic root cause analysis. Symptom characterization, hypothesis
+        generation, evidence evaluation, and causal chain tracing.
+
+    - name: requirements-elicitation
+      path: protocols/reasoning/requirements-elicitation.md
+      description: >
+        Requirements extraction from natural language. Produces numbered,
+        atomic, testable requirements with RFC 2119 keywords.
+
+    - name: iterative-refinement
+      path: protocols/reasoning/iterative-refinement.md
+      description: >
+        Protocol for revising documents through feedback cycles while
+        preserving structural integrity, numbering, cross-references,
+        and internal consistency.
+
+    - name: promptkit-design
+      path: protocols/reasoning/promptkit-design.md
+      description: >
+        Reasoning protocol for designing new PromptKit components. Scoping,
+        component type selection, dependency analysis, and convention
+        compliance.
+
+    - name: devops-platform-analysis
+      path: protocols/reasoning/devops-platform-analysis.md
+      description: >
+        Systematic reasoning about DevOps platform constructs: pipelines,
+        triggers, jobs, environments, secrets, approvals, and artifacts.
+        Platform-agnostic methodology with platform-specific instantiation.
+
+    - name: requirements-from-implementation
+      path: protocols/reasoning/requirements-from-implementation.md
+      description: >
+        Systematic reasoning protocol for deriving structured requirements
+        from existing source code. Transforms code understanding into
+        testable, atomic requirements with acceptance criteria.
+
+    - name: traceability-audit
+      path: protocols/reasoning/traceability-audit.md
+      description: >
+        Systematic cross-document comparison protocol for auditing
+        requirements, design, and validation artifacts. Builds
+        traceability matrices and classifies divergence using the
+        specification-drift taxonomy.
+
+    - name: code-compliance-audit
+      path: protocols/reasoning/code-compliance-audit.md
+      description: >
+        Systematic protocol for auditing source code against requirements
+        and design documents. Maps specification claims to code behavior
+        and classifies findings using the specification-drift taxonomy
+        (D8–D10).
+
+    - name: test-compliance-audit
+      path: protocols/reasoning/test-compliance-audit.md
+      description: >
+        Systematic protocol for auditing test code against a validation
+        plan and requirements document. Maps test case definitions to
+        test implementations and classifies findings using the
+        specification-drift taxonomy (D11–D13).
+
+    - name: integration-audit
+      path: protocols/reasoning/integration-audit.md
+      description: >
+        Systematic protocol for auditing cross-component integration
+        points. Maps integration flows across component boundaries,
+        verifies interface contracts, and checks integration test
+        coverage. Classifies findings using the specification-drift
+        taxonomy (D14–D16).
+
+    - name: rfc-extraction
+      path: protocols/reasoning/rfc-extraction.md
+      description: >
+        Systematic protocol for extracting structured requirements from
+        RFCs and internet-drafts. Handles normative language (RFC 2119),
+        state machines, cross-RFC dependencies, ABNF grammars, and
+        IANA/security considerations.
+
+    - name: invariant-extraction
+      path: protocols/reasoning/invariant-extraction.md
+      description: >
+        Systematic protocol for extracting structured invariants
+        (constraints, state machines, timing assumptions, ordering
+        rules, error conditions) from specifications or source code.
+        Produces a dense, filtered subset of a full requirements
+        extraction.
+
+    - name: workflow-arbitration
+      path: protocols/reasoning/workflow-arbitration.md
+      description: >
+        Protocol for evaluating progress in a multi-agent coding
+        workflow. Determines whether reviewer findings are valid,
+        coder responses are adequate, and whether the workflow should
+        continue or terminate.
+
+    - name: requirements-reconciliation
+      path: protocols/reasoning/requirements-reconciliation.md
+      description: >
+        Systematic protocol for reconciling multiple requirements
+        documents from different sources into a unified specification.
+        Classifies each requirement by cross-source compatibility
+        (Universal, Majority, Divergent, Extension).
+
+    - name: finding-classification
+      path: protocols/reasoning/finding-classification.md
+      description: >
+        Systematic protocol for classifying findings (bugs, warnings,
+        review comments, audit results) against a known taxonomy or
+        pattern catalog. Performs three-way classification with
+        justification, confidence analysis, and catalog update proposals.
+
+    - name: interface-contract-audit
+      path: protocols/reasoning/interface-contract-audit.md
+      description: >
+        Systematic audit of an interface contract for completeness,
+        internal consistency, and alignment with governing specifications.
+        Checks matrix coverage, guarantee traceability, obligation
+        enforceability, invariant consistency, and failure mode
+        completeness.
+
+    - name: exhaustive-path-tracing
+      path: protocols/reasoning/exhaustive-path-tracing.md
+      description: >
+        Systematic per-file deep review protocol. Full-file reading,
+        local structure mapping, high-risk function identification,
+        exhaustive path tracing with cleanup/lock/refcount symmetry
+        verification, and coverage ledger documentation.
+
+    - name: protocol-evolution
+      path: protocols/reasoning/protocol-evolution.md
+      description: >
+        Systematic protocol for modifying or extending existing protocol
+        specifications. Specification ingestion, change request analysis,
+        impact tracing, consistency verification, and delta generation.
+
+    - name: protocol-conflict-analysis
+      path: protocols/reasoning/protocol-conflict-analysis.md
+      description: >
+        Systematic protocol for comparing two protocol specifications.
+        Protocol decomposition, semantic overlap detection, contradiction
+        analysis, interoperability assessment, and resolution
+        recommendations.
+
+    - name: protocol-validation-design
+      path: protocols/reasoning/protocol-validation-design.md
+      description: >
+        Systematic protocol for deriving a validation specification from
+        a protocol specification. Testable property identification, test
+        case design, validation oracle definition, and coverage analysis.
+
+    - name: spec-invariant-audit
+      path: protocols/reasoning/spec-invariant-audit.md
+      description: >
+        Systematic adversarial analysis of a specification against
+        user-supplied invariants. Constructs compliant-but-violating
+        interpretations to find spec gaps, ambiguities, contradictions,
+        and missing recovery paths.
+
+    - name: quantitative-constraint-validation
+      path: protocols/reasoning/quantitative-constraint-validation.md
+      description: >
+        Systematic validation of quantitative claims (budgets, rollups,
+        margins) against specification constraints. Covers constraint
+        extraction, arithmetic verification, unit checking, margin
+        analysis, sensitivity analysis, and completeness.
+
+    - name: spec-evolution-diff
+      path: protocols/reasoning/spec-evolution-diff.md
+      description: >
+        Systematic methodology for comparing two versions of a
+        specification at the invariant level. Extracts invariants
+        from both versions, classifies each delta by type and
+        backward-compatibility impact, and produces migration guidance.
+    - name: session-profiling
+      path: protocols/reasoning/session-profiling.md
+      description: >
+        Systematic analysis of LLM session logs to detect token
+        inefficiencies, redundant reasoning, and structural waste.
+        Maps execution back to PromptKit components and produces
+        actionable optimization recommendations.
+
+    - name: change-propagation
+      path: protocols/reasoning/change-propagation.md
+      description: >
+        Systematic reasoning protocol for propagating changes through
+        artifact layers while maintaining alignment. Covers impact
+        analysis, change derivation, invariant checking, completeness
+        verification, and conflict detection. Domain-agnostic.
+
+    - name: step-retrospective
+      path: protocols/reasoning/step-retrospective.md
+      description: >
+        Protocol for learning from execution experience in iterative
+        workflows. After completing a step, systematically analyze
+        variances (tooling gaps, process gaps, knowledge gaps), trace
+        root causes, and feed concrete improvements back into the
+        tooling and process for the next iteration.
+
+    - name: presentation-design
+      path: protocols/reasoning/presentation-design.md
+      description: >
+        Systematic reasoning protocol for designing technical
+        presentations. Covers audience analysis, narrative arc
+        construction, slide decomposition, visual design decisions,
+        time budgeting, and demo choreography. Domain-agnostic.
+
+    - name: component-selection
+      path: protocols/reasoning/component-selection.md
+      description: >
+        Systematic reasoning protocol for selecting electronic components
+        from requirements. Covers functional decomposition, candidate
+        identification via real-time search, technical evaluation, sourcing
+        verification, cross-component compatibility, and decision matrix
+        generation. Scoped to core functional components.
+
+    - name: schematic-design
+      path: protocols/reasoning/schematic-design.md
+      description: >
+        Systematic reasoning protocol for designing a circuit schematic
+        from requirements and selected components. Covers power
+        architecture, supporting circuitry derivation from datasheets,
+        signal routing, protection circuits, and KiCad .kicad_sch
+        S-expression generation with explicit visual layout rules.
+
+    - name: pcb-layout-design
+      path: protocols/reasoning/pcb-layout-design.md
+      description: >
+        Systematic reasoning protocol for PCB layout and routing from
+        a completed schematic. Covers layout requirements gathering,
+        board definition, design rules, component placement, routing
+        strategy, and automated execution via Python pcbnew API with
+        FreeRouting autorouter and KiCad DRC validation loop. Supports
+        2-layer and 4-layer stackups.
+
+    - name: prompt-decomposition
+      path: protocols/reasoning/prompt-decomposition.md
+      description: >
+        Systematic reasoning protocol for decomposing an existing
+        hand-written prompt into PromptKit's semantic layers. Extracts
+        persona, protocol, taxonomy, format, and task instruction
+        segments. Maps each to existing library components or marks
+        as novel for assimilation.
+
+    - name: manufacturing-artifact-generation
+      path: protocols/reasoning/manufacturing-artifact-generation.md
+      description: >
+        Systematic reasoning protocol for generating manufacturing
+        deliverables from a completed PCB design. Covers Gerber files,
+        Excellon drill files, BOM formatting, pick-and-place centroid
+        files, and assembly drawings with fab-specific formatting for
+        JLCPCB, PCBWay, and other services.
+
+    - name: corpus-safety-audit
+      path: protocols/reasoning/corpus-safety-audit.md
+      description: >
+        Systematic audit of a prompt component corpus for assimilation
+        risks. Checks provenance and attribution, detects verbatim
+        copying from external sources, screens for confidential or
+        internal-only content, and verifies license compliance.
+
+formats:
+  - name: requirements-doc
+    path: formats/requirements-doc.md
+    produces: requirements-document
+    description: >
+      Structured requirements document with numbered REQ-IDs, acceptance
+      criteria, constraints, assumptions, and risks.
+
+  - name: design-doc
+    path: formats/design-doc.md
+    produces: design-document
+    consumes: requirements-document
+    description: >
+      Software design document with architecture, API contracts, data models,
+      tradeoff analysis, and open questions.
+
+  - name: validation-plan
+    path: formats/validation-plan.md
+    produces: validation-plan
+    consumes: requirements-document
+    description: >
+      Test and validation plan with traceability matrix, test cases,
+      risk prioritization, and pass/fail criteria.
+
+  - name: investigation-report
+    path: formats/investigation-report.md
+    produces: investigation-report
+    description: >
+      Investigation report with findings, root cause analysis, evidence,
+      remediation plan, and prevention recommendations.
+
+  - name: multi-artifact
+    path: formats/multi-artifact.md
+    produces: artifact-set
+    description: >
+      Multi-file output format for tasks producing multiple deliverables
+      (structured data, reports, coverage logs). Defines artifact manifests,
+      per-artifact schemas, and cross-artifact consistency rules.
+
+  - name: promptkit-pull-request
+    path: formats/promptkit-pull-request.md
+    produces: promptkit-contribution
+    description: >
+      Output format for PromptKit contributions. Produces PR-ready component
+      files, manifest update, and pull request description.
+
+  - name: pipeline-spec
+    path: formats/pipeline-spec.md
+    produces: pipeline-spec
+    description: >
+      CI/CD pipeline specification with platform-specific YAML, design
+      rationale, configuration requirements, and deployment notes.
+
+  - name: triage-report
+    path: formats/triage-report.md
+    produces: triage-report
+    description: >
+      Prioritized triage report for issues, pull requests, or work items.
+      Classifies items by priority, effort, and recommended action.
+
+  - name: release-notes
+    path: formats/release-notes.md
+    produces: release-notes
+    description: >
+      Structured release notes with changelog, breaking changes, upgrade
+      instructions, and contributor acknowledgment.
+
+  - name: agent-instructions
+    path: formats/agent-instructions.md
+    produces: agent-instruction-file
+    description: >
+      Output format for persistent agent instruction files, custom agent
+      definitions, and CLI skills. Produces .github/instructions/,
+      .github/agents/, .github/skills/, CLAUDE.md, and .cursorrules.
+      Works with VS Code, JetBrains, GitHub.com, and the Copilot CLI.
+
+  - name: copilot-prompt-file
+    path: formats/copilot-prompt-file.md
+    produces: copilot-prompt-file
+    description: >
+      Output format for GitHub Copilot prompt files
+      (.github/prompts/*.prompt.md). Packages an assembled PromptKit
+      prompt as a reusable slash command invokable in Copilot Chat.
+      Full semantic fidelity — no content condensation.
+
+  - name: agentic-workflow
+    path: formats/agentic-workflow.md
+    produces: agentic-workflow
+    description: >
+      Output format for GitHub Agentic Workflow files
+      (.github/workflows/*.md). Packages an assembled PromptKit prompt
+      as a scheduled or event-driven automation running in GitHub
+      Actions with a coding agent. Requires `gh aw` CLI for compilation.
+
+  - name: implementation-plan
+    path: formats/implementation-plan.md
+    produces: implementation-plan
+    description: >
+      Output format for implementation and refactoring plans. Task
+      breakdown, dependency ordering, risk assessment, and verification
+      strategy.
+
+  - name: north-star-document
+    path: formats/north-star-document.md
+    produces: north-star-document
+    description: >
+      Strategic north-star or architectural vision document. Describes
+      the desired end state, guiding principles, and transition
+      considerations — not the implementation plan.
+
+  - name: structured-findings
+    path: formats/structured-findings.md
+    produces: structured-findings
+    description: >
+      Output format for structured findings documents. Transforms raw
+      diagnostic output (compiler warnings, linter results, security
+      scans) into consolidated, classified findings with root cause
+      analysis, severity assessment, and remediation guidance.
+
+  - name: exhaustive-review-report
+    path: formats/exhaustive-review-report.md
+    produces: exhaustive-review-report
+    description: >
+      Exhaustive code review report with per-file coverage ledgers,
+      adversarial finding templates requiring falsification proof,
+      and false-positive rejection logs.
+
+  - name: protocol-delta
+    path: formats/protocol-delta.md
+    produces: protocol-delta
+    consumes: requirements-document
+    description: >
+      Protocol specification amendment format. Supports amendment
+      (section-by-section changes), redline (tracked changes), and
+      standalone (revised specification) presentation styles. Tracks
+      normative language changes, backward compatibility, and
+      cross-reference updates.
+
+  - name: protocol-validation-spec
+    path: formats/protocol-validation-spec.md
+    produces: protocol-validation-spec
+    consumes: requirements-document
+    description: >
+      Protocol validation specification format. Structures conformance
+      tests around state machine coverage, message format verification,
+      error handling, negotiation, interoperability scenarios, and
+      validation tool requirements.
+
+  - name: rfc-document
+    path: formats/rfc-document.md
+    produces: rfc-document
+    consumes: requirements-document
+    description: >
+      RFC and internet-draft output format using the xml2rfc Version 3
+      vocabulary (RFC 7991). Produces structurally valid XML for the
+      xml2rfc toolchain. Covers front matter, normative sections, ABNF,
+      state machines, security/IANA considerations, and references.
+
+  - name: behavioral-model
+    path: formats/behavioral-model.md
+    produces: behavioral-model
+    description: >
+      Output format for reconstructed behavioral models. State machines
+      with diagrams and transition tables, control/signal flow graphs,
+      implicit invariants, and undefined behavior catalogs. Supports
+      code, schematics, netlists, firmware images, configurations,
+      and protocol captures.
+
+  - name: interface-contract
+    path: formats/interface-contract.md
+    produces: interface-contract
+    consumes: requirements-document
+    description: >
+      Output format for interface contracts between two parties. Defines
+      boundary resources, operating states, per-resource-per-state
+      guarantees, consumer obligations, testable invariants, and failure
+      modes. Domain-agnostic — works for hardware/firmware, service/service,
+      library/consumer, and OS/driver boundaries.
+
+  - name: architecture-spec
+    path: formats/architecture-spec.md
+    produces: architecture-spec
+    description: >
+      Architecture specification document with protocol/system description,
+      network and software architecture, programming interfaces, persisted
+      state, and cross-cutting implications (security, performance,
+      management, observability, testing).
+
+  - name: structured-patch
+    path: formats/structured-patch.md
+    produces: structured-patch
+    description: >
+      Traceable, structured patch format for incremental changes to
+      existing artifacts. Each change entry links to its upstream
+      motivation with Before/After content, traceability matrix, and
+      invariant impact assessment. Domain-agnostic.
+
+  - name: presentation-kit
+    path: formats/presentation-kit.md
+    produces: presentation-kit
+    description: >
+      Output format for technical presentations. Produces a PowerPoint
+      file via python-pptx, optional PDF export, embedded speaker
+      notes, a presentation timeline, and an optional demo plan.
+      All artifacts form a cohesive presentation kit.
+
+taxonomies:
+  - name: stack-lifetime-hazards
+    path: taxonomies/stack-lifetime-hazards.md
+    domain: memory-safety
+    description: >
+      Classification scheme (H1-H5) for stack lifetime and memory escape
+      hazards at system boundaries. Covers stack address escape, async
+      pend/complete lifetime violations, and writable views of read-only data.
+
+  - name: specification-drift
+    path: taxonomies/specification-drift.md
+    domain: specification-traceability
+    description: >
+      Classification scheme (D1-D16) for specification drift across
+      requirements, design, validation, code, test, and integration
+      artifacts. Covers untraced requirements, orphaned design decisions,
+      assumption drift, coverage failures, code/test compliance gaps,
+      and cross-component integration drift.
+
+  - name: cpp-review-patterns
+    path: taxonomies/cpp-review-patterns.md
+    domain: cpp-code-review
+    description: >
+      Classification scheme for C++ code review findings. Categorizes
+      findings by pattern family (memory safety, concurrency, API design,
+      performance, error handling, code clarity) with 19 labels and
+      cross-references to analysis protocols.
+
+  - name: kernel-defect-categories
+    path: taxonomies/kernel-defect-categories.md
+    domain: kernel-correctness
+    description: >
+      Classification scheme (K1-K14) for OS kernel and driver defects.
+      Covers lock leaks, refcount imbalances, cleanup omissions, lifetime
+      bugs, integer arithmetic errors, state machine races, accounting
+      mismatches, and security boundary mistakes.
+
+  - name: protocol-change-categories
+    path: taxonomies/protocol-change-categories.md
+    domain: protocol-engineering
+    description: >
+      Classification scheme (PC1-PC8) for protocol specification changes.
+      Categorizes changes by impact on existing implementations and
+      interoperability: editorial, clarification, backward-compatible
+      extension, optional behavior change, state machine modification,
+      message format change, security-impacting, and deprecation/removal.
+
+templates:
+  document-authoring:
+    - name: author-requirements-doc
+      path: templates/author-requirements-doc.md
+      description: >
+        Generate a requirements document from a natural language description.
+        Single-shot generation. For complex/ambiguous projects, use
+        interactive-design instead.
+      persona: software-architect
+      protocols: [anti-hallucination, self-verification, requirements-elicitation]
+      format: requirements-doc
+      pipeline_position: 1
+
+    - name: author-architecture-spec
+      path: templates/author-architecture-spec.md
+      description: >
+        Generate an architecture specification document describing the
+        structure, scope, and cross-cutting concerns of a software component
+        or system. Covers protocol/system description, network and software
+        architecture, interfaces, and architectural implications.
+      persona: software-architect
+      protocols: [anti-hallucination, self-verification]
+      format: architecture-spec
+
+    - name: interactive-design
+      path: templates/interactive-design.md
+      description: >
+        Multi-phase interactive design session. Phase 1: reason, question,
+        and challenge before generating. Phase 2: generate when told.
+        Phase 3: iterative refinement. Use for complex or ambiguous projects.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, requirements-elicitation, iterative-refinement]
+      format: requirements-doc
+
+    - name: author-north-star
+      path: templates/author-north-star.md
+      description: >
+        Interactive authoring of a north-star or architectural vision
+        document. Evidence-grounded, section-by-section drafting with
+        user review. Use for strategic direction documents.
+      persona: software-architect
+      protocols: [anti-hallucination, self-verification]
+      format: north-star-document
+
+    - name: author-design-doc
+      path: templates/author-design-doc.md
+      description: >
+        Generate a design document that addresses a requirements document.
+      persona: software-architect
+      protocols: [anti-hallucination, self-verification]
+      format: design-doc
+      pipeline_position: 2
+      requires: requirements-document
+
+    - name: author-validation-plan
+      path: templates/author-validation-plan.md
+      description: >
+        Generate a validation plan covering all requirements.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification]
+      format: validation-plan
+      pipeline_position: 3
+      requires: requirements-document
+
+    - name: reverse-engineer-requirements
+      path: templates/reverse-engineer-requirements.md
+      description: >
+        Reverse-engineer a structured requirements document from existing
+        source code. Analyzes implementation to extract behavioral contracts,
+        API specifications, and invariants.
+      persona: reverse-engineer
+      protocols: [anti-hallucination, self-verification, operational-constraints, requirements-from-implementation]
+      format: requirements-doc
+
+    - name: audit-traceability
+      path: templates/audit-traceability.md
+      description: >
+        Audit requirements, design, and validation documents for
+        specification drift. Cross-checks traceability, assumption
+        consistency, constraint propagation, and coverage completeness.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, traceability-audit]
+      taxonomies: [specification-drift]
+      format: investigation-report
+      pipeline_position: 4
+      requires: [requirements-document, validation-plan]
+
+    - name: audit-code-compliance
+      path: templates/audit-code-compliance.md
+      description: >
+        Audit source code against requirements and design documents.
+        Detects unimplemented requirements, undocumented behavior, and
+        constraint violations.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, operational-constraints, code-compliance-audit]
+      taxonomies: [specification-drift]
+      format: investigation-report
+      requires: requirements-document
+
+    - name: audit-test-compliance
+      path: templates/audit-test-compliance.md
+      description: >
+        Audit test code against a validation plan and requirements
+        document. Detects unimplemented test cases, missing acceptance
+        criterion assertions, and assertion mismatches.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, operational-constraints, test-compliance-audit]
+      taxonomies: [specification-drift]
+      format: investigation-report
+      requires: [requirements-document, validation-plan]
+
+    - name: audit-integration-compliance
+      path: templates/audit-integration-compliance.md
+      description: >
+        Audit cross-component integration points against an integration
+        specification and per-component specs. Detects unspecified
+        integration flows, interface contract mismatches, and untested
+        integration paths.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, operational-constraints, integration-audit]
+      taxonomies: [specification-drift]
+      format: investigation-report
+      requires: requirements-document
+
+    - name: audit-spec-invariants
+      path: templates/audit-spec-invariants.md
+      description: >
+        Adversarial analysis of a specification against user-supplied
+        invariants. Finds spec gaps, ambiguities, and contradictions
+        that could lead to invariant violations in any conforming
+        implementation.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, spec-invariant-audit]
+      format: investigation-report
+
+    - name: diff-specifications
+      path: templates/diff-specifications.md
+      description: >
+        Compare two versions of a specification at the invariant level.
+        Classify each change by type (Added, Removed, Tightened, Relaxed,
+        Modified, Clarified) and backward-compatibility impact. Produce
+        migration guidance for implementers.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, spec-evolution-diff]
+      format: investigation-report
+
+    - name: author-interface-contract
+      path: templates/author-interface-contract.md
+      description: >
+        Generate an interface contract between two components from a
+        requirements document, optionally referencing a design document.
+        Produces per-resource-per-state guarantee and obligation
+        matrices with invariants and failure modes.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification]
+      format: interface-contract
+      requires: requirements-document
+
+    - name: audit-interface-contract
+      path: templates/audit-interface-contract.md
+      description: >
+        Audit an interface contract for completeness, internal
+        consistency, and alignment with governing specifications.
+        Checks matrix coverage, traceability, enforceability, and
+        failure mode completeness.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, interface-contract-audit]
+      format: investigation-report
+      requires: interface-contract
+
+    - name: validate-budget
+      path: templates/validate-budget.md
+      description: >
+        Validate a quantitative analysis (power budget, link budget,
+        cost rollup, timing analysis, memory budget) against
+        specification constraints. Extracts constraints and claims,
+        verifies arithmetic, computes margins, and performs sensitivity
+        analysis.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, quantitative-constraint-validation]
+      format: investigation-report
+
+  standards:
+    - name: extract-rfc-requirements
+      path: templates/extract-rfc-requirements.md
+      description: >
+        Extract structured requirements from an RFC or internet-draft.
+        Normalizes normative language, state machines, message formats,
+        and cross-RFC dependencies into a requirements document.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, rfc-extraction]
+      format: requirements-doc
+
+    - name: reconcile-requirements
+      path: templates/reconcile-requirements.md
+      description: >
+        Reconcile multiple requirements documents from different sources
+        (RFCs, implementations, specifications) into a unified spec.
+        Classifies requirements by cross-source compatibility.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, requirements-reconciliation]
+      format: requirements-doc
+
+    - name: extract-invariants
+      path: templates/extract-invariants.md
+      description: >
+        Extract structured invariants (constraints, state machines,
+        timing assumptions, error conditions) from a specification or
+        source code. Produces a dense, filtered subset of a full
+        requirements extraction.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, invariant-extraction]
+      format: requirements-doc
+
+    - name: author-rfc
+      path: templates/author-rfc.md
+      description: >
+        Author an RFC or internet-draft using the xml2rfc Version 3
+        vocabulary. Produces structurally valid xml2rfc XML from a
+        project description, protocol design, or requirements document.
+      persona: protocol-architect
+      protocols: [anti-hallucination, self-verification]
+      format: rfc-document
+
+  presentations:
+    - name: author-presentation
+      path: templates/author-presentation.md
+      description: >
+        Interactive authoring of professional technical presentations.
+        Multi-phase workflow: audience analysis, narrative design,
+        slide planning, appearance preferences, content generation,
+        and PowerPoint production via python-pptx. Produces a
+        presentation kit with slides, speaker notes, timeline, and
+        optional demo plan and PDF export.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, operational-constraints, presentation-design]
+      format: presentation-kit
+
+  code-generation:
+    - name: author-implementation-prompt
+      path: templates/author-implementation-prompt.md
+      description: >
+        Produce a structured prompt for a coding agent to generate
+        spec-compliant implementation code. Pairs with
+        audit-code-compliance for a generate/verify loop.
+      persona: implementation-engineer
+      protocols: [anti-hallucination, self-verification]
+      format: requirements-doc
+      requires: requirements-document
+
+    - name: author-test-prompt
+      path: templates/author-test-prompt.md
+      description: >
+        Produce a structured prompt for a coding agent to generate
+        spec-compliant test code. Pairs with audit-test-compliance
+        for a generate/verify loop.
+      persona: test-engineer
+      protocols: [anti-hallucination, self-verification]
+      format: validation-plan
+      requires: [requirements-document, validation-plan]
+
+    - name: author-workflow-prompts
+      path: templates/author-workflow-prompts.md
+      description: >
+        Generate prompt assets for a multi-agent coding workflow:
+        coder, reviewer, validator, and orchestrator prompts.
+        Designed for external orchestrators — PromptKit produces
+        the prompts, not the runtime.
+      persona: workflow-arbiter
+      protocols: [anti-hallucination, self-verification, workflow-arbitration]
+      format: multi-artifact
+      requires: requirements-document
+
+  investigation:
+    - name: investigate-bug
+      path: templates/investigate-bug.md
+      description: >
+        Investigate a bug from a problem description. Apply root cause
+        analysis and produce an investigation report.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification, operational-constraints, root-cause-analysis]
+      taxonomies: [stack-lifetime-hazards]
+      format: investigation-report
+
+    - name: find-and-fix-bugs
+      path: templates/find-and-fix-bugs.md
+      description: >
+        Autonomous bug-finding workflow. Scan code for a specific class
+        of bugs, apply fixes, build to verify, iterate on errors, and
+        produce a findings report.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification, operational-constraints, minimal-edit-discipline]
+      format: investigation-report
+
+    - name: fix-compiler-warnings
+      path: templates/fix-compiler-warnings.md
+      description: >
+        Systematic batch remediation of compiler warnings. Process
+        warnings from SARIF or compiler output, apply rule-specific
+        fix patterns, build-verify each fix, and discover new patterns.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification, operational-constraints, minimal-edit-discipline, compiler-diagnostics-cpp]
+      format: structured-findings
+
+    - name: investigate-security
+      path: templates/investigate-security.md
+      description: >
+        Security audit of code or a system component. Systematic
+        vulnerability analysis with severity classification.
+      persona: security-auditor
+      protocols: [anti-hallucination, self-verification, operational-constraints, security-vulnerability]
+      taxonomies: [stack-lifetime-hazards]
+      format: investigation-report
+
+    - name: profile-session
+      path: templates/profile-session.md
+      description: >
+        Analyze a completed LLM session log to identify token
+        inefficiencies and structural waste. Maps execution back to
+        PromptKit components and produces optimization recommendations.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, session-profiling]
+      format: investigation-report
+
+    - name: classify-findings
+      path: templates/classify-findings.md
+      description: >
+        Classify a set of findings against a reference catalog or taxonomy.
+        Three-way classification (Exact Match / Variant / New Pattern) with
+        justification, confidence analysis, and catalog update proposals.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification, finding-classification]
+      format: structured-findings
+
+  code-analysis:
+    - name: review-code
+      path: templates/review-code.md
+      description: >
+        Thorough code review for correctness, safety, security,
+        and maintainability. Supports additional analysis protocols.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification, operational-constraints]
+      taxonomies: [stack-lifetime-hazards]
+      format: investigation-report
+
+    - name: review-cpp-code
+      path: templates/review-cpp-code.md
+      description: >
+        C/C++ specialized code review combining general review with
+        research-validated best practices and memory safety analysis.
+        Optionally applies Win32 API or performance-critical C patterns.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification, operational-constraints, cpp-best-practices, memory-safety-c]
+      taxonomies: [cpp-review-patterns]
+      format: investigation-report
+
+    - name: exhaustive-bug-hunt
+      path: templates/exhaustive-bug-hunt.md
+      description: >
+        Deep, adversarial, line-by-line code review optimized for defect
+        discovery. Exhaustive path tracing with coverage proof and
+        falsification discipline. Optionally applies kernel-specific
+        analysis for OS code.
+      persona: systems-engineer
+      protocols: [anti-hallucination, self-verification, adversarial-falsification, exhaustive-path-tracing]
+      taxonomies: [kernel-defect-categories]
+      format: exhaustive-review-report
+
+    - name: reconstruct-behavior
+      path: templates/reconstruct-behavior.md
+      description: >
+        Reconstruct a behavioral model from an existing engineering
+        artifact. Extracts state machines, control/signal flow, and
+        implicit invariants from code, schematics, netlists,
+        configurations, firmware images, or protocol captures.
+      persona: reverse-engineer
+      protocols: [anti-hallucination, self-verification, operational-constraints, invariant-extraction]
+      format: behavioral-model
+
+    - name: review-schematic
+      path: templates/review-schematic.md
+      description: >
+        Audit a schematic or netlist against requirements and component
+        datasheets. Checks power architecture, pin-level correctness,
+        bus integrity, protection circuits, power sequencing, passive
+        components, and completeness.
+      persona: electrical-engineer
+      protocols: [anti-hallucination, self-verification, schematic-compliance-audit]
+      format: investigation-report
+
+    - name: validate-simulation
+      path: templates/validate-simulation.md
+      description: >
+        Review circuit simulation output (SPICE, power budget, thermal
+        analysis) against specification constraints. Verifies setup,
+        extracts results, checks compliance, assesses corner-case
+        coverage, and evaluates model validity.
+      persona: electrical-engineer
+      protocols: [anti-hallucination, self-verification, simulation-validation]
+      format: investigation-report
+
+    - name: review-bom
+      path: templates/review-bom.md
+      description: >
+        Audit a bill of materials against the schematic and requirements.
+        Checks part number correctness, voltage and temperature ratings,
+        package matches, cost compliance, sourcing risks, and
+        completeness.
+      persona: electrical-engineer
+      protocols: [anti-hallucination, self-verification, bom-consistency]
+      format: investigation-report
+
+    - name: review-layout
+      path: templates/review-layout.md
+      description: >
+        Audit a PCB layout against schematic intent and requirements.
+        Reviews DRC output, trace widths, impedance control, ground
+        plane integrity, component placement, thermal design, and
+        manufacturing constraints.
+      persona: electrical-engineer
+      protocols: [anti-hallucination, self-verification, layout-design-review]
+      format: investigation-report
+
+    - name: audit-link-budget
+      path: templates/audit-link-budget.md
+      description: >
+        Audit a wireless link budget for transmitter chain, path loss
+        model validity, receiver chain, margin adequacy, regulatory
+        compliance, and sensitivity to environmental assumptions.
+      persona: rf-engineer
+      protocols: [anti-hallucination, self-verification, link-budget-audit]
+      format: investigation-report
+
+    - name: review-enclosure
+      path: templates/review-enclosure.md
+      description: >
+        Audit an enclosure design for an electronic assembly. Reviews
+        PCB fit, environmental protection, thermal management, antenna
+        compatibility, sensor access, manufacturing feasibility, and
+        mounting provisions.
+      persona: mechanical-engineer
+      protocols: [anti-hallucination, self-verification, enclosure-design-review]
+      format: investigation-report
+
+  hardware-design:
+    - name: design-schematic
+      path: templates/design-schematic.md
+      description: >
+        Interactive schematic design session. Guides the user from
+        project requirements through component selection to a complete
+        KiCad schematic with adversarial audits at each gate.
+      persona: electrical-engineer
+      protocols: [anti-hallucination, self-verification, component-selection, component-selection-audit, schematic-design, schematic-compliance-audit]
+
+    - name: design-pcb-layout
+      path: templates/design-pcb-layout.md
+      description: >
+        Interactive PCB layout session. Guides the user from a completed
+        schematic through placement, automated routing, and DRC
+        validation with layout-to-schematic feedback loop.
+      persona: electrical-engineer
+      protocols: [anti-hallucination, self-verification, pcb-layout-design, layout-design-review]
+
+    - name: emit-manufacturing-artifacts
+      path: templates/emit-manufacturing-artifacts.md
+      description: >
+        Interactive manufacturing artifact generation session. Produces
+        fab-ready Gerbers, drill files, BOM, pick-and-place, and
+        assembly drawings with fab-specific formatting for JLCPCB
+        and PCBWay.
+      persona: electrical-engineer
+      protocols: [anti-hallucination, self-verification, manufacturing-artifact-generation]
+
+    - name: hardware-design-workflow
+      path: templates/hardware-design-workflow.md
+      description: >
+        End-to-end hardware design workflow from initial idea to
+        manufacturable artifacts. Guides through requirements,
+        component selection, schematic, PCB layout, and manufacturing
+        with adversarial audits and user review at every gate.
+      persona: electrical-engineer
+      protocols: [anti-hallucination, self-verification, requirements-elicitation, component-selection, component-selection-audit, schematic-design, schematic-compliance-audit, pcb-layout-design, layout-design-review, manufacturing-artifact-generation]
+
+  testing:
+    - name: discover-tests-for-changes
+      path: templates/discover-tests-for-changes.md
+      description: >
+        Analyze local code changes to identify affected components and
+        discover relevant tests. Finds test files near changed code,
+        checks test configuration, and recommends execution strategy.
+      persona: test-engineer
+      protocols: [anti-hallucination, self-verification, operational-constraints]
+      format: triage-report
+
+    - name: scaffold-test-project
+      path: templates/scaffold-test-project.md
+      description: >
+        Scaffold a complete test project with build configuration, test
+        class boilerplate, and test runner setup for a given framework
+        and language.
+      persona: test-engineer
+      protocols: [anti-hallucination, self-verification]
+      format: implementation-plan
+
+  planning:
+    - name: plan-implementation
+      path: templates/plan-implementation.md
+      description: >
+        Decompose a project into an actionable implementation plan
+        with tasks, dependencies, and risk assessment.
+      persona: software-architect
+      protocols: [anti-hallucination, self-verification]
+      format: implementation-plan
+
+    - name: plan-refactoring
+      path: templates/plan-refactoring.md
+      description: >
+        Plan a safe, incremental refactoring with step-by-step
+        changes that maintain correctness at each step.
+      persona: software-architect
+      protocols: [anti-hallucination, self-verification]
+      format: implementation-plan
+
+  agent-authoring:
+    - name: author-agent-instructions
+      path: templates/author-agent-instructions.md
+      description: >
+        Assemble PromptKit components (persona, protocols) into composable
+        agent skill files, custom agent definitions, or CLI skills. For
+        GitHub Copilot, produces .github/instructions/*.instructions.md,
+        .github/agents/*.agent.md, or .github/skills/*/SKILL.md. Also
+        supports Claude Code (CLAUDE.md) and Cursor (.cursorrules).
+      persona: promptkit-contributor
+      protocols: [anti-hallucination, self-verification]
+      format: agent-instructions
+
+  contribution:
+    - name: extend-library
+      path: templates/extend-library.md
+      description: >
+        Guide a contributor through designing and building new PromptKit
+        components. Interactive workflow producing PR-ready files.
+      persona: promptkit-contributor
+      protocols: [anti-hallucination, self-verification, promptkit-design]
+      format: promptkit-pull-request
+
+    - name: decompose-prompt
+      path: templates/decompose-prompt.md
+      description: >
+        Reverse-engineer a hand-written prompt into PromptKit's semantic
+        layers. Maps segments to existing components, flags improvements,
+        and generates PR-ready files for novel components.
+      persona: promptkit-contributor
+      protocols: [anti-hallucination, self-verification, prompt-decomposition]
+      format: promptkit-pull-request
+
+    - name: audit-library-consistency
+      path: templates/audit-library-consistency.md
+      description: >
+        Audit the PromptKit component library for overlap, redundancy,
+        inconsistency, and consolidation opportunities. Finds protocol
+        duplication, template near-duplicates, terminology drift, and
+        stale cross-references.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification]
+      format: investigation-report
+
+    - name: audit-library-health
+      path: templates/audit-library-health.md
+      description: >
+        Comprehensive health audit of the PromptKit component library.
+        Three-pass analysis covering structural consistency, corpus
+        safety for assimilation risks, and runtime fitness assessment.
+        Produces a unified investigation report with PR-ready
+        remediation recommendations.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, operational-constraints, corpus-safety-audit]
+      format: investigation-report
+
+  devops:
+    - name: author-pipeline
+      path: templates/author-pipeline.md
+      description: >
+        Generate a production-ready CI/CD pipeline for a given application
+        and target platform. Supports GitHub Actions, Azure DevOps, GitLab CI.
+      persona: devops-engineer
+      protocols: [anti-hallucination, self-verification, devops-platform-analysis]
+      format: pipeline-spec
+
+    - name: triage-issues
+      path: templates/triage-issues.md
+      description: >
+        Triage and prioritize open issues or work items. Classify by
+        priority and effort, identify patterns, recommend a workflow.
+      persona: devops-engineer
+      protocols: [anti-hallucination, self-verification]
+      format: triage-report
+
+    - name: triage-pull-requests
+      path: templates/triage-pull-requests.md
+      description: >
+        Triage open pull requests to identify which need review, are stale,
+        have conflicts, or are ready to merge. Prioritize review effort.
+      persona: devops-engineer
+      protocols: [anti-hallucination, self-verification]
+      format: triage-report
+
+    - name: root-cause-ci-failure
+      path: templates/root-cause-ci-failure.md
+      description: >
+        Investigate a failing CI/CD pipeline run. Analyze logs, pipeline
+        configuration, and platform behavior. Produce an investigation report.
+      persona: devops-engineer
+      protocols: [anti-hallucination, self-verification, root-cause-analysis, devops-platform-analysis]
+      format: investigation-report
+
+    - name: author-release
+      path: templates/author-release.md
+      description: >
+        Generate structured release notes from commits, PRs, and issues
+        between two versions. Changelog, breaking changes, upgrade instructions.
+      persona: devops-engineer
+      protocols: [anti-hallucination, self-verification]
+      format: release-notes
+
+    - name: review-infrastructure
+      path: templates/review-infrastructure.md
+      description: >
+        Review infrastructure-as-code (Terraform, Bicep, ARM, Pulumi,
+        CloudFormation) for correctness, security, and best practices.
+      persona: devops-engineer
+      protocols: [anti-hallucination, self-verification, security-vulnerability]
+      format: investigation-report
+
+    - name: generate-commit-message
+      path: templates/generate-commit-message.md
+      description: >
+        Generate a structured commit message from staged git changes.
+        Analyzes diffs to produce a Problem/Solution or Conventional
+        Commits format message with file change summaries.
+      persona: software-architect
+      protocols: [anti-hallucination, self-verification]
+
+  protocol-engineering:
+    - name: evolve-protocol
+      path: templates/evolve-protocol.md
+      description: >
+        Interactive protocol evolution session. Ingests an existing protocol
+        specification, works with the user to design modifications, traces
+        impact, verifies consistency, and produces a protocol delta document.
+      persona: protocol-architect
+      protocols: [anti-hallucination, self-verification, protocol-evolution]
+      taxonomies: [protocol-change-categories]
+      format: protocol-delta
+
+    - name: analyze-protocol-conflicts
+      path: templates/analyze-protocol-conflicts.md
+      description: >
+        Compare two protocol specifications to identify semantic conflicts,
+        incompatible assumptions, and interoperability hazards. Produces
+        an investigation report with resolution recommendations.
+      persona: protocol-architect
+      protocols: [anti-hallucination, self-verification, protocol-conflict-analysis]
+      format: investigation-report
+
+    - name: author-protocol-validation
+      path: templates/author-protocol-validation.md
+      description: >
+        Derive a protocol validation specification from a protocol spec.
+        Produces a test blueprint covering state machine coverage, message
+        format conformance, error handling, and interoperability scenarios.
+      persona: protocol-architect
+      protocols: [anti-hallucination, self-verification, protocol-validation-design]
+      format: protocol-validation-spec
+
+  engineering-workflow:
+    - name: engineering-workflow
+      path: templates/engineering-workflow.md
+      description: >
+        Full incremental engineering workflow with human-in-the-loop
+        review. Guides an agent through requirements discovery,
+        specification changes, implementation changes, adversarial
+        audits, and deliverable creation. Domain-agnostic.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, adversarial-falsification, operational-constraints, requirements-elicitation, iterative-refinement, change-propagation, traceability-audit, code-compliance-audit, test-compliance-audit]
+      taxonomies: [specification-drift]
+
+    - name: collaborate-requirements-change
+      path: templates/collaborate-requirements-change.md
+      description: >
+        Interactive requirements discovery for incremental changes.
+        Work with the user to understand, refine, and produce a
+        structured requirements patch. Domain-agnostic.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, requirements-elicitation, iterative-refinement]
+      format: structured-patch
+
+    - name: generate-spec-changes
+      path: templates/generate-spec-changes.md
+      description: >
+        Generate design and validation specification changes from a
+        requirements patch. Propagates each requirement change to
+        design sections and validation entries. Domain-agnostic.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, change-propagation]
+      format: structured-patch
+
+    - name: generate-implementation-changes
+      path: templates/generate-implementation-changes.md
+      description: >
+        Generate implementation and verification changes from a
+        specification patch. Propagates design and validation changes
+        to implementation artifacts. Domain-agnostic.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, operational-constraints, change-propagation]
+      format: structured-patch
+
+    - name: audit-spec-alignment
+      path: templates/audit-spec-alignment.md
+      description: >
+        Adversarial audit of specification patches against user intent.
+        Verifies requirements, design, and validation changes faithfully
+        represent what the user asked for. Domain-agnostic.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, adversarial-falsification, traceability-audit]
+      taxonomies: [specification-drift]
+      format: investigation-report
+
+    - name: audit-implementation-alignment
+      path: templates/audit-implementation-alignment.md
+      description: >
+        Adversarial audit of implementation patches against specification
+        deltas. Verifies implementation and verification changes correctly
+        realize the specification changes. Domain-agnostic.
+      persona: specification-analyst
+      protocols: [anti-hallucination, self-verification, adversarial-falsification, operational-constraints, code-compliance-audit, test-compliance-audit]
+      taxonomies: [specification-drift]
+      format: investigation-report
+
+    - name: spec-extraction-workflow
+      path: templates/spec-extraction-workflow.md
+      description: >
+        Bootstrap any repository with a clean semantic baseline. Scans
+        existing code, docs, tests, and issues, extracts draft specs,
+        collaborates with the user to clarify intent, audits for
+        consistency, and produces PR-ready spec files. Domain-agnostic
+        complement to engineering-workflow.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, operational-constraints, adversarial-falsification, requirements-from-implementation, requirements-elicitation, iterative-refinement, traceability-audit]
+      taxonomies: [specification-drift]
+
+    - name: maintenance-workflow
+      path: templates/maintenance-workflow.md
+      description: >
+        Periodic health check workflow. Re-audits requirements, design,
+        validation, and implementation for drift, collaborates with the
+        user to classify findings, generates corrective patches, and
+        restores alignment. Domain-agnostic — completes the engineering
+        lifecycle triad.
+      persona: configurable
+      protocols: [anti-hallucination, self-verification, adversarial-falsification, operational-constraints, traceability-audit, code-compliance-audit, test-compliance-audit, change-propagation, iterative-refinement]
+      taxonomies: [specification-drift]
+
+pipelines:
+  document-lifecycle:
+    description: >
+      Full document lifecycle from requirements through validation.
+      Each stage produces an artifact consumed by the next.
+    stages:
+      - template: author-requirements-doc
+        produces: requirements-document
+      - template: author-design-doc
+        consumes: requirements-document
+        produces: design-document
+      - template: author-validation-plan
+        consumes: requirements-document
+        produces: validation-plan
+      - template: audit-traceability
+        consumes: [requirements-document, validation-plan]
+        produces: investigation-report
+
+  protocol-engineering:
+    description: >
+      Protocol specification lifecycle from requirements extraction
+      through evolution and validation. Stages after extraction can
+      be used independently or sequentially.
+    stages:
+      - template: extract-rfc-requirements
+        produces: requirements-document
+      - template: evolve-protocol
+        produces: protocol-delta
+      - template: author-protocol-validation
+        produces: protocol-validation-spec
+      - template: analyze-protocol-conflicts
+        produces: investigation-report
+
+  hardware-lifecycle:
+    description: >
+      Full hardware design lifecycle from requirements through
+      manufacturing. Interleaves generative design stages with
+      adversarial audit stages. Stages consume the artifacts
+      declared in their contracts and may be used independently
+      or sequentially as those artifacts become available. Audit
+      stages provide an independent review pass even when the
+      preceding design stage includes a self-audit. The full
+      workflow can also be run as a single interactive session
+      using the hardware-design-workflow template.
+    stages:
+      - template: author-requirements-doc
+        produces: requirements-document
+      - template: design-schematic
+        produces: artifact-set
+      - template: review-schematic
+        consumes: [requirements-document, artifact-set]
+        produces: investigation-report
+      - template: validate-simulation
+        consumes: requirements-document
+        produces: investigation-report
+      - template: review-bom
+        consumes: [requirements-document, artifact-set]
+        produces: investigation-report
+      - template: design-pcb-layout
+        consumes: artifact-set
+        produces: artifact-set
+      - template: review-layout
+        consumes: [requirements-document, artifact-set]
+        produces: investigation-report
+      - template: emit-manufacturing-artifacts
+        consumes: artifact-set
+        produces: artifact-set
+
+  engineering-workflow:
+    description: >
+      Domain-agnostic incremental engineering workflow with
+      human-in-the-loop review. Propagates changes through
+      requirements, specifications, and implementation with
+      adversarial audits at each transition. Phases can loop
+      back based on audit verdicts or user feedback.
+    stages:
+      - template: collaborate-requirements-change
+        produces: requirements-patch
+      - template: generate-spec-changes
+        consumes: requirements-patch
+        produces: spec-patch
+      - template: audit-spec-alignment
+        consumes: [requirements-patch, spec-patch]
+        produces: investigation-report
+      - template: generate-implementation-changes
+        consumes: spec-patch
+        produces: implementation-patch
+      - template: audit-implementation-alignment
+        consumes: [spec-patch, implementation-patch]
+        produces: investigation-report
