@@ -2,6 +2,7 @@
   "repository": "microsoft/PromptKit",
   "ref": "v0.6.1",
   "commit": "5fb0b1a53b2abe13a80123a77b4110bcd074e449",
+  "license_sha256": "871b275282d44316e61259c277f590557fc97a3f2c4b78681a4ddba0fcc40f53",
   "files": {
     "formats/agent-instructions.md": "a4f2991cf5b8f3b50c2ed09f5becccc405b8cdf55cb7ebc03c959bb98b875dd5",
     "formats/agentic-workflow.md": "b0e0862eb1e10d30fcfb17198a8b5fef052a8331b7d4fa48e330c18baec7c911",

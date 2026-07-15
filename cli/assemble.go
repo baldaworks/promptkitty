@@ -139,7 +139,7 @@ func markdownBytes(markdown string) []byte {
 
 func writeMarkdown(path, markdown string, force bool) (err error) {
 	if err := os.MkdirAll(filepath.Dir(path), outputDirectoryMode); err != nil {
-		return fmt.Errorf("create Promptkitty output directory: %w", err)
+		return fmt.Errorf("create PromptKitty output directory: %w", err)
 	}
 
 	flags := os.O_WRONLY | os.O_CREATE | os.O_EXCL
@@ -152,16 +152,16 @@ func writeMarkdown(path, markdown string, force bool) (err error) {
 			return fmt.Errorf("output file %q already exists; use --force to overwrite it", path)
 		}
 
-		return fmt.Errorf("create Promptkitty output: %w", err)
+		return fmt.Errorf("create PromptKitty output: %w", err)
 	}
 	defer func() {
 		if closeErr := file.Close(); err == nil && closeErr != nil {
-			err = fmt.Errorf("close Promptkitty output: %w", closeErr)
+			err = fmt.Errorf("close PromptKitty output: %w", closeErr)
 		}
 	}()
 
 	if _, err := file.Write(markdownBytes(markdown)); err != nil {
-		return fmt.Errorf("write Promptkitty output: %w", err)
+		return fmt.Errorf("write PromptKitty output: %w", err)
 	}
 
 	return nil

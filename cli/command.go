@@ -11,10 +11,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Version is the Promptkitty application version.
-const Version = "0.2.0"
+// Version is the PromptKitty application version.
+const Version = "0.2.1"
 
-// Options configures a reusable Promptkitty command tree.
+// Options configures a reusable PromptKitty command tree.
 type Options struct {
 	// Use is the command name shown in help. The default is "promptkitty".
 	Use string
@@ -25,7 +25,7 @@ type Options struct {
 	Library *promptkitty.Library
 }
 
-// NewCommand returns the complete Promptkitty command tree. Callers may mount
+// NewCommand returns the complete PromptKitty command tree. Callers may mount
 // the returned command below another Cobra root and add host-specific commands.
 func NewCommand(options Options) *cobra.Command {
 	use := strings.TrimSpace(options.Use)
@@ -55,7 +55,7 @@ func NewCommand(options Options) *cobra.Command {
 	return cmd
 }
 
-// Run executes the standalone Promptkitty command and returns its process exit
+// Run executes the standalone PromptKitty command and returns its process exit
 // code. Successful machine output is written only to stdout; diagnostics use
 // stderr.
 func Run(ctx context.Context, args []string, stdout, stderr io.Writer) int {

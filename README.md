@@ -1,19 +1,20 @@
-# Promptkitty
+# PromptKitty
 
 Embedded PromptKit catalog and deterministic prompt assembler for Go.
 
-Promptkitty packages the complete component library from Microsoft PromptKit
-`v0.6.1` into a Go module. It loads no files and makes no network calls at
-runtime. Applications can browse personas, protocols, formats, taxonomies,
-templates, and pipelines, then assemble a fully parameterized prompt.
+PromptKitty packages a pinned component snapshot from Microsoft PromptKit into
+a Go module. It loads no files and makes no network calls at runtime.
+Applications can browse personas, protocols, formats, taxonomies, templates,
+and pipelines, then assemble a fully parameterized prompt. The exact upstream
+ref, resolved commit, and SHA-256 inventory live in `content/upstream.json`.
 
 ## Install
 
 Install the library or standalone CLI:
 
 ```bash
-go get github.com/baldaworks/promptkitty@v0.2.0
-go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.2.0
+go get github.com/baldaworks/promptkitty@v0.2.1
+go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.2.1
 ```
 
 ## Assemble a prompt
@@ -87,21 +88,23 @@ write a file or `--json` to receive the complete assembly result.
 
 ## Updating PromptKit content
 
-The embedded snapshot is pinned by commit and SHA-256 inventory in
-`content/upstream.json`. Maintainers update the ref and commit, then run:
+The embedded snapshot is pinned by ref, resolved commit, and SHA-256 inventory
+in `content/upstream.json`. To update it, change only the `ref` field to the
+desired immutable PromptKit tag, then run:
 
 ```bash
-go run ./internal/tools/syncpromptkit \
-  -lock content/upstream.json \
-  -dest content/promptkit \
-  -refresh-lock
 go generate ./...
 ```
 
-Review component and inventory changes together. Runtime builds never contact
-GitHub.
+The generator resolves that ref through GitHub, downloads its archive, copies
+the supported Markdown components, manifest, and upstream `LICENSE`, then
+rewrites the resolved commit and all SHA-256 checksums. Review the content,
+license, and lock diff together. Runtime builds never contact GitHub.
 
 ## License
 
-Promptkitty is MIT licensed. Embedded PromptKit content remains under its
-original MIT license and attribution; see `THIRD_PARTY_NOTICES.md`.
+PromptKitty's original Go code and documentation are distributed under the root
+MIT `LICENSE`, copyright Alexey Samoylov. The embedded Microsoft PromptKit
+content remains under Microsoft's MIT license and attribution; its exact
+license copy is refreshed by `go generate` and stored at
+`third_party/promptkit/LICENSE`. See `THIRD_PARTY_NOTICES.md`.
