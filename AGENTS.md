@@ -1,8 +1,9 @@
-# Promptkitty agent guidance
+# PromptKitty agent guidance
 
 - Keep the root package library-first and free of CLI/process dependencies.
 - Preserve the pinned PromptKit component files byte-for-byte; update them only
-  through the sync tool and review the generated inventory diff.
+  by changing `content/upstream.json`'s `ref`, running `go generate ./...`, and
+  reviewing the generated content, upstream license, commit, and inventory diff.
 - Preserve PromptKit SPDX headers and third-party attribution.
 - Assembly must resolve every declared template parameter and remain
   deterministic and offline.

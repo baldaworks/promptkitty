@@ -2,7 +2,7 @@ package promptkitty
 
 import "embed"
 
-//go:generate go run ./internal/tools/syncpromptkit -lock content/upstream.json -dest content/promptkit
+//go:generate go run ./internal/tools/syncpromptkit -lock content/upstream.json -dest content/promptkit -license third_party/promptkit/LICENSE -update
 
 // embeddedContent contains the pinned PromptKit component library. The
 // patterns are intentionally explicit so documentation and repository-only

@@ -49,7 +49,7 @@ func TestAssembleConfigurablePersonaNullFormatAndOverrides(t *testing.T) {
 		Template: "engineering-workflow",
 		Params: map[string]string{
 			"persona":            "systems-engineer",
-			"project_name":       "Promptkitty",
+			"project_name":       "PromptKitty",
 			"change_description": "Add deterministic assembly",
 			"existing_artifacts": "None",
 			"context":            "Go library",

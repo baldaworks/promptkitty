@@ -14,6 +14,12 @@ import (
 	promptkittycli "github.com/baldaworks/promptkitty/cli"
 )
 
+func TestVersionMatchesRelease(t *testing.T) {
+	if got, want := promptkittycli.Version, "0.2.1"; got != want {
+		t.Fatalf("Version = %q, want %q", got, want)
+	}
+}
+
 func TestCatalogCommands(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -189,7 +195,7 @@ func execute(t *testing.T, args ...string) (stdout, stderr string, err error) {
 	t.Helper()
 	library, err := promptkitty.New()
 	if err != nil {
-		t.Fatalf("promptkitty.New() returned unexpected error: %v", err)
+		t.Fatalf("PromptKitty New() returned unexpected error: %v", err)
 	}
 
 	var stdoutBuffer, stderrBuffer bytes.Buffer
