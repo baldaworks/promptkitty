@@ -9,8 +9,11 @@ templates, and pipelines, then assemble a fully parameterized prompt.
 
 ## Install
 
+Install the library or standalone CLI:
+
 ```bash
-go get github.com/baldaworks/promptkitty@v0.1.0
+go get github.com/baldaworks/promptkitty@v0.2.0
+go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.2.0
 ```
 
 ## Assemble a prompt
@@ -58,8 +61,29 @@ review, err := library.Show("review-code")
 pipelines := library.Pipelines()
 ```
 
-The root package intentionally contains no CLI dependencies. A future
-`cmd/promptkitty` command can be added as a thin transport over this API.
+The reusable `cli` package exposes the same command tree for host applications:
+
+```go
+cmd := cli.NewCommand(cli.Options{Use: "promptkit"})
+host.AddCommand(cmd)
+```
+
+The standalone command supports `list`, `search`, `show`, and `assemble`:
+
+```bash
+promptkitty list
+promptkitty search security --type template
+promptkitty show review-code --json
+promptkitty assemble review-code \
+  --param code='package main' \
+  --param review_focus=correctness \
+  --param language=Go \
+  --param additional_protocols= \
+  --param context='small example'
+```
+
+`assemble` writes rendered Markdown to stdout by default. Use `--output` to
+write a file or `--json` to receive the complete assembly result.
 
 ## Updating PromptKit content
 
