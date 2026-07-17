@@ -8,43 +8,91 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/baldaworks/promptkitty.svg)](https://pkg.go.dev/github.com/baldaworks/promptkitty)
 [![License: MIT](https://img.shields.io/github/license/baldaworks/promptkitty)](LICENSE)
 
-## PromptKitty Assemble and reusable agent instructions
+**PromptKit workflows for coding agents, the command line, and Go.**
 
-PromptKitty packages Microsoft PromptKit as a deterministic Go library and a standalone CLI. Describe the engineering task, find the most relevant template with weighted BM25 search, run its intake, and assemble a complete prompt without reading external component files or contacting a service. A companion skill turns the result into provider-native project instructions or subagent profiles.
+Install PromptKitty as a plugin or native Agent Skills, then describe the engineering work you want done. Its skills discover the most relevant PromptKit template, collect every required input, run interactive intake when needed, and assemble a complete prompt. They can also turn that behavior into provider-native project instructions or a subagent profile.
+
+The same embedded catalog is available through a standalone CLI and a deterministic Go library. PromptKitty performs runtime discovery and assembly without reading external component files or contacting a service.
 
 The embedded snapshot is PromptKit `v0.6.1`: 15 personas, 56 protocols, 24 formats, 5 taxonomies, 71 templates, and 4 pipelines. Every declared parameter must be resolved before assembly succeeds.
 
-## Install and set up
+## Agent skills
 
-Run PromptKitty directly from npm:
+PromptKitty installs two complementary skills:
+
+| Skill | What it does | Result |
+| --- | --- | --- |
+| **PromptKitty Assemble** | Turns a natural-language engineering task into a catalog search, template selection, required-parameter intake, and final PromptKit assembly. | A raw prompt, or a handoff for project instructions or a subagent profile. |
+| **PromptKitty Author Agent Instructions** | Accepts assembled source—or asks Assemble to prepare it—and adapts the behavior to the selected agent host. | Ready-to-commit project instructions or a provider-native subagent profile. |
+
+Assemble handles both single-shot and interactive templates. Single-shot templates offer **Raw prompt**, **Project instructions**, or **Subagent profile** as the result. Interactive templates perform their first safe questioning and confirmation phase, fold the answers into the declared parameters, and then produce the final assembled source without executing the later task.
+
+Author Agent Instructions resolves the provider, output type, slug, and project root; validates the provider-native file; and previews a manifest and concise diff. It requires explicit confirmation before writing anything.
+
+## Install for your agent
+
+Run setup directly from npm; no global PromptKitty installation is required:
 
 ```bash
 npx --yes @baldaworks/promptkitty@latest --version
 npx --yes @baldaworks/promptkitty@latest setup codex
 ```
 
-Or install the native Go command:
+PromptKitty supports six agent hosts. Setup installs both skills:
+
+| Host | Setup | Assemble | Author Agent Instructions |
+| --- | --- | --- | --- |
+| Codex | `npx --yes @baldaworks/promptkitty@latest setup codex` | `$promptkitty:assemble` | `$promptkitty:author-agent-instructions` |
+| Claude Code | `npx --yes @baldaworks/promptkitty@latest setup claude` | `/promptkitty:assemble` | `/promptkitty:author-agent-instructions` |
+| Grok Build | `npx --yes @baldaworks/promptkitty@latest setup grok` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |
+| Copilot CLI | `npx --yes @baldaworks/promptkitty@latest setup copilot` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |
+| OpenCode | `npx --yes @baldaworks/promptkitty@latest setup opencode` | `/promptkitty` | `/promptkitty-author-agent-instructions` |
+| Cursor | `npx --yes @baldaworks/promptkitty@latest setup cursor` | `promptkitty-assemble` skill | `promptkitty-author-agent-instructions` skill |
+
+Codex, Claude Code, Grok Build, and Copilot CLI setup use the repository's plugin marketplace. OpenCode setup writes both skills and matching commands under `.opencode/`; Cursor setup writes both skills under `.cursor/skills/`. Existing local files are preserved; use `--force` only when known PromptKitty assets should be replaced. Host CLIs and credentials remain external.
+
+## Use PromptKitty from Codex
+
+Ask Assemble for an engineering artifact or workflow instead of selecting and parameterizing a template yourself:
+
+```text
+$promptkitty:assemble Write a requirements document for deterministic offline prompt discovery.
+```
+
+The skill searches the embedded catalog, explains any materially different template choices, inspects the selected template, and asks only for required values that are not already available from the request or repository context. It then returns the raw assembled prompt or hands the resolved source to Author Agent Instructions when you choose a reusable result.
+
+You can also request reusable behavior directly:
+
+```text
+$promptkitty:author-agent-instructions Create a spec-writing subagent for Codex in this repository.
+```
+
+When no assembled source was supplied, the authoring skill asks Assemble to prepare it in source-only mode. It then collects the Codex target and slug, shows the proposed path and diff, validates the TOML, and waits for explicit approval before creating the subagent file.
+
+## Project instructions and subagents
+
+Author Agent Instructions uses the pinned PromptKit `author-agent-instructions` template, with current provider paths supplied by PromptKitty:
+
+| Host | Project instructions | Subagent profile |
+| --- | --- | --- |
+| Codex | `AGENTS.md` | `.codex/agents/<name>.toml` |
+| Claude Code | `.claude/rules/<name>.md` | `.claude/agents/<name>.md` |
+| Grok Build | `.grok/rules/<name>.md` | `.grok/agents/<name>.md` |
+| Copilot CLI | `.github/instructions/*.instructions.md` | `.github/agents/<name>.agent.md` |
+| OpenCode | `AGENTS.md` | `.opencode/agents/<name>.md` |
+| Cursor | `.cursor/rules/<name>.mdc` | `.cursor/agents/<name>.md` |
+
+Project guidance is maintained inside stable PromptKitty markers, so unrelated instructions remain untouched. Existing subagent profiles require an explicit overwrite confirmation. Codex and OpenCode share one managed `AGENTS.md` block when both are selected.
+
+## CLI quick start
+
+The agent skills drive this same public CLI internally. Use it directly for shell workflows, automation, or catalog exploration.
+
+Install the native Go command:
 
 ```bash
 go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.4.0
 ```
-
-PromptKitty can install its two skills for six agent hosts:
-
-| Host | Setup |
-| --- | --- |
-| Codex | `promptkitty setup codex` |
-| Claude Code | `promptkitty setup claude` |
-| Grok Build | `promptkitty setup grok` |
-| Copilot CLI | `promptkitty setup copilot` |
-| OpenCode | `promptkitty setup opencode` |
-| Cursor | `promptkitty setup cursor` |
-
-Codex, Claude Code, Grok Build, and Copilot CLI setup use the repository's plugin marketplace. OpenCode setup writes both skills and matching commands under `.opencode/`; Cursor setup writes both skills under `.cursor/skills/`. Existing local files are preserved; use `--force` only when known PromptKitty assets should be replaced. Host CLIs and credentials remain external.
-
-The installed skills are **PromptKitty Assemble** and **PromptKitty Author Agent Instructions**. Invoke Assemble as `$promptkitty:assemble` in Codex, `/promptkitty:assemble` in Claude Code, `/promptkitty-assemble` in Grok Build or Copilot CLI, and `/promptkitty` in OpenCode. The authoring skill uses the corresponding `author-agent-instructions` name; OpenCode exposes `/promptkitty-author-agent-instructions`. Cursor discovers both as native Agent Skills.
-
-## Quick start
 
 Search for a template using a natural-language task:
 
@@ -64,23 +112,6 @@ promptkitty assemble author-requirements-doc \
 ```
 
 `assemble` writes Markdown to stdout. Use `--output` only when a file is wanted, `--json` for the complete assembly result, and repeatable `--param-file`, `--protocol`, and `--taxonomy` flags for multiline or additional composition inputs.
-
-PromptKitty Assemble inspects `metadata.mode`. Single-shot templates offer raw output, project instructions, or a subagent profile. Interactive templates first run a provisional assembly, ask the first safe round of template-specific questions, fold confirmed answers into declared parameters, and only then perform the final assembly. The later workflow remains in the returned prompt and is not executed automatically.
-
-## Project instructions and subagents
-
-PromptKitty Author Agent Instructions uses the pinned PromptKit `author-agent-instructions` template, with current provider paths supplied by PromptKitty:
-
-| Host | Project instructions | Subagent profile |
-| --- | --- | --- |
-| Codex | `AGENTS.md` | `.codex/agents/<name>.toml` |
-| Claude Code | `.claude/rules/<name>.md` | `.claude/agents/<name>.md` |
-| Grok Build | `.grok/rules/<name>.md` | `.grok/agents/<name>.md` |
-| Copilot CLI | `.github/instructions/*.instructions.md` | `.github/agents/<name>.agent.md` |
-| OpenCode | `AGENTS.md` | `.opencode/agents/<name>.md` |
-| Cursor | `.cursor/rules/<name>.mdc` | `.cursor/agents/<name>.md` |
-
-The authoring skill previews a manifest and diffs before writing. Project guidance is maintained inside stable PromptKitty markers, while existing subagent profiles require explicit overwrite confirmation. Codex and OpenCode share one managed `AGENTS.md` block when both are selected.
 
 ## BM25 relevance search
 

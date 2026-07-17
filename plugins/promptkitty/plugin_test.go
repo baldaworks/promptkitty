@@ -172,25 +172,43 @@ func TestNPMDistributionIsStaticAndScoped(t *testing.T) {
 	}
 }
 
-func TestREADMEDocumentsNpxSkillsAndEverySetupTarget(t *testing.T) {
+func TestREADMEDocumentsAgentSkillsBeforeCLIAndEverySetupTarget(t *testing.T) {
 	data := readTestFile(t, filepath.Join("..", "..", "README.md"))
 	text := string(data)
 	for _, want := range []string{
-		"## PromptKitty Assemble and reusable agent instructions",
+		"**PromptKit workflows for coding agents, the command line, and Go.**",
+		"## Agent skills",
+		"**PromptKitty Assemble**",
+		"**PromptKitty Author Agent Instructions**",
 		"npx --yes @baldaworks/promptkitty@latest setup codex",
-		"| Codex | `promptkitty setup codex` |",
-		"| Claude Code | `promptkitty setup claude` |",
-		"| Grok Build | `promptkitty setup grok` |",
-		"| Copilot CLI | `promptkitty setup copilot` |",
-		"| OpenCode | `promptkitty setup opencode` |",
-		"| Cursor | `promptkitty setup cursor` |",
-		"PromptKitty Author Agent Instructions",
-		"provisional assembly",
+		"| Codex | `npx --yes @baldaworks/promptkitty@latest setup codex` | `$promptkitty:assemble` | `$promptkitty:author-agent-instructions` |",
+		"| Claude Code | `npx --yes @baldaworks/promptkitty@latest setup claude` | `/promptkitty:assemble` | `/promptkitty:author-agent-instructions` |",
+		"| Grok Build | `npx --yes @baldaworks/promptkitty@latest setup grok` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |",
+		"| Copilot CLI | `npx --yes @baldaworks/promptkitty@latest setup copilot` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |",
+		"| OpenCode | `npx --yes @baldaworks/promptkitty@latest setup opencode` | `/promptkitty` | `/promptkitty-author-agent-instructions` |",
+		"| Cursor | `npx --yes @baldaworks/promptkitty@latest setup cursor` | `promptkitty-assemble` skill | `promptkitty-author-agent-instructions` skill |",
+		"$promptkitty:assemble Write a requirements document",
+		"$promptkitty:author-agent-instructions Create a spec-writing subagent",
+		"**Raw prompt**",
+		"**Project instructions**",
+		"**Subagent profile**",
+		"previews a manifest and concise diff",
+		"explicit confirmation before writing anything",
+		"## CLI quick start",
 		"CGO_ENABLED=0",
 	} {
 		if !strings.Contains(text, want) {
 			t.Errorf("README is missing %q", want)
 		}
+	}
+
+	agentSkills := strings.Index(text, "## Agent skills")
+	cliQuickStart := strings.Index(text, "## CLI quick start")
+	if agentSkills < 0 || cliQuickStart < 0 || agentSkills >= cliQuickStart {
+		t.Error("README must document agent skills before the CLI quick start")
+	}
+	if strings.Contains(text, "## PromptKitty Assemble and reusable agent instructions") {
+		t.Error("README contains the obsolete feature wedge")
 	}
 }
 
