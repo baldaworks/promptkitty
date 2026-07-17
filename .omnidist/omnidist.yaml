@@ -30,7 +30,13 @@ profiles:
                 license: MIT
                 keywords:
                     - promptkit
+                    - ai-agents
+                    - agent-skills
+                    - prompt-engineering
                     - prompts
-                    - assembly
                     - cli
+                    - go
+                    - golang
+                    - npm
+                    - plugin
                 include-readme: true

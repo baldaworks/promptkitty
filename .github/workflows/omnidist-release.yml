@@ -48,6 +48,17 @@ jobs:
         run: omnidist --profile 'default' build
       - name: Stage npm artifacts
         run: omnidist --profile 'default' stage --only npm
+      # Omnidist 0.1.31 does not expose these npm manifest fields and generates
+      # the meta-package description as "Meta package for promptkitty".
+      - name: Complete npm package metadata
+        working-directory: .omnidist/default/npm/@baldaworks/promptkitty
+        run: |
+          npm pkg set \
+            'description=PromptKit workflows for coding agents, the command line, and Go.' \
+            'homepage=https://github.com/baldaworks/promptkitty#readme' \
+            'bugs.url=https://github.com/baldaworks/promptkitty/issues' \
+            'author.name=Baldaworks' \
+            'author.url=https://github.com/baldaworks'
       - name: Include vecgo license in npm artifacts
         run: |
           for license in .omnidist/default/npm/@baldaworks/*/LICENSE; do
