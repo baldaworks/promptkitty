@@ -12,10 +12,11 @@ import (
 
 	"github.com/baldaworks/promptkitty"
 	promptkittycli "github.com/baldaworks/promptkitty/cli"
+	internalversion "github.com/baldaworks/promptkitty/internal/version"
 )
 
 func TestVersionMatchesRelease(t *testing.T) {
-	if got, want := promptkittycli.Version, "0.4.0"; got != want {
+	if got, want := promptkittycli.Version, internalversion.Current; got != want {
 		t.Fatalf("Version = %q, want %q", got, want)
 	}
 }

@@ -5,7 +5,7 @@ description: Turn a fully assembled PromptKit prompt into ready-to-commit projec
 
 # PromptKitty Author Agent Instructions
 
-Use `promptkitty` when installed. Otherwise use the pinned fallback `npx --yes @baldaworks/promptkitty@0.4.0` for every PromptKitty command. Use only the public CLI and remain offline after the package is available.
+Use `promptkitty` when installed. Otherwise use the pinned fallback `npx --yes @baldaworks/promptkitty@0.4.2` for every PromptKitty command. Use only the public CLI and remain offline after the package is available.
 
 Read [references/provider-targets.md](references/provider-targets.md) completely before planning or writing provider files. Its current paths and schemas override stale platform paths in the pinned PromptKit template.
 

@@ -8,11 +8,12 @@ import (
 	"strings"
 
 	"github.com/baldaworks/promptkitty"
+	internalversion "github.com/baldaworks/promptkitty/internal/version"
 	"github.com/spf13/cobra"
 )
 
 // Version is the PromptKitty application version.
-const Version = "0.4.0"
+const Version = internalversion.Current
 
 // Options configures a reusable PromptKitty command tree.
 type Options struct {
