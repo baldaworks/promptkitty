@@ -88,20 +88,22 @@ Project guidance is maintained inside stable PromptKitty markers, so unrelated i
 
 The agent skills drive this same public CLI internally. Use it directly for shell workflows, automation, or catalog exploration.
 
-Install the native Go command:
+Run the CLI directly from npm without installing it:
 
 ```bash
-go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.4.0
+npx --yes @baldaworks/promptkitty@latest search "write a requirements document" --type template
+npx --yes @baldaworks/promptkitty@latest show author-requirements-doc --json
 ```
 
-Search for a template using a natural-language task:
+For repeated use, install the same native command globally from npm or with Go:
 
 ```bash
-promptkitty search "write a requirements document" --type template
-promptkitty show author-requirements-doc --json
+npm install --global @baldaworks/promptkitty@latest
+# Or install with Go:
+go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.4.2
 ```
 
-Assemble the selected template after supplying every declared parameter:
+The remaining examples use the installed `promptkitty` command. Assemble the selected template after supplying every declared parameter:
 
 ```bash
 promptkitty assemble author-requirements-doc \
@@ -151,7 +153,7 @@ The reusable `cli` package keeps successful output on stdout and diagnostics on 
 Install the module:
 
 ```bash
-go get github.com/baldaworks/promptkitty@v0.4.0
+go get github.com/baldaworks/promptkitty@v0.4.2
 ```
 
 Load the embedded catalog and assemble a fully parameterized prompt:
@@ -190,7 +192,7 @@ pipelines := library.Pipelines()
 
 ## npm distribution
 
-Releases publish `@baldaworks/promptkitty` with statically linked native executables for macOS and Linux on amd64/arm64 and Windows on amd64. Omnidist builds every target with `CGO_ENABLED=0`. The npm launcher selects the matching binary, so users need neither Go nor CGO tooling.
+Releases publish `@baldaworks/promptkitty` with statically linked native executables for macOS and Linux on amd64/arm64 and Windows on amd64. The CLI quick start runs this package through `npx` or installs it globally with npm. Omnidist builds every target with `CGO_ENABLED=0`. The npm launcher selects the matching binary, so users need neither Go nor CGO tooling.
 
 ## Updating the PromptKit snapshot
 

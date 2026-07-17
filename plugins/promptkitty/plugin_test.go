@@ -7,9 +7,11 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	internalversion "github.com/baldaworks/promptkitty/internal/version"
 )
 
-const releaseVersion = "0.4.0"
+const releaseVersion = internalversion.Current
 
 func TestAssembleSkillUsesPromptKittyCLIAndHandoff(t *testing.T) {
 	data := readTestFile(t, filepath.Join("skills", "assemble", "SKILL.md"))
@@ -130,6 +132,25 @@ func TestPluginManifests(t *testing.T) {
 			t.Errorf("%s description does not mention agent instructions", path)
 		}
 	}
+
+	marketplaceData := readTestFile(t, filepath.Join("..", "..", ".github", "plugin", "marketplace.json"))
+	var marketplace struct {
+		Metadata struct {
+			Version string `json:"version"`
+		} `json:"metadata"`
+		Plugins []struct {
+			Version string `json:"version"`
+		} `json:"plugins"`
+	}
+	if err := json.Unmarshal(marketplaceData, &marketplace); err != nil {
+		t.Fatalf("parse marketplace.json: %v", err)
+	}
+	if marketplace.Metadata.Version != releaseVersion {
+		t.Errorf("marketplace metadata version = %q, want %q", marketplace.Metadata.Version, releaseVersion)
+	}
+	if len(marketplace.Plugins) != 1 || marketplace.Plugins[0].Version != releaseVersion {
+		t.Errorf("marketplace plugins = %#v, want one plugin at %q", marketplace.Plugins, releaseVersion)
+	}
 }
 
 func TestCodexSkillMetadata(t *testing.T) {
@@ -218,6 +239,10 @@ func TestREADMEDocumentsAgentSkillsBeforeCLIAndEverySetupTarget(t *testing.T) {
 		"previews a manifest and concise diff",
 		"explicit confirmation before writing anything",
 		"## CLI quick start",
+		"npx --yes @baldaworks/promptkitty@latest search \"write a requirements document\" --type template",
+		"npm install --global @baldaworks/promptkitty@latest",
+		"go install github.com/baldaworks/promptkitty/cmd/promptkitty@v" + releaseVersion,
+		"go get github.com/baldaworks/promptkitty@v" + releaseVersion,
 		"CGO_ENABLED=0",
 	} {
 		if !strings.Contains(text, want) {
@@ -229,6 +254,18 @@ func TestREADMEDocumentsAgentSkillsBeforeCLIAndEverySetupTarget(t *testing.T) {
 	cliQuickStart := strings.Index(text, "## CLI quick start")
 	if agentSkills < 0 || cliQuickStart < 0 || agentSkills >= cliQuickStart {
 		t.Error("README must document agent skills before the CLI quick start")
+	}
+
+	goLibrary := strings.Index(text, "## Go library")
+	if goLibrary < 0 || goLibrary <= cliQuickStart {
+		t.Fatal("README must document Go library after CLI quick start")
+	}
+	quickStart := text[cliQuickStart:goLibrary]
+	npx := strings.Index(quickStart, "npx --yes @baldaworks/promptkitty@latest search")
+	npmGlobal := strings.Index(quickStart, "npm install --global @baldaworks/promptkitty@latest")
+	goInstall := strings.Index(quickStart, "go install github.com/baldaworks/promptkitty/cmd/promptkitty@v"+releaseVersion)
+	if npx < 0 || npmGlobal < 0 || goInstall < 0 || npx >= npmGlobal || npmGlobal >= goInstall {
+		t.Error("CLI quick start must present npx, global npm, and Go installation in that order")
 	}
 	if strings.Contains(text, "## PromptKitty Assemble and reusable agent instructions") {
 		t.Error("README contains the obsolete feature wedge")

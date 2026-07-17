@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version-file: 'go.mod'
+      - name: Verify release version
+        run: test "$(go run ./cmd/promptkitty --version)" = "promptkitty version ${GITHUB_REF_NAME#v}"
       - run: go test ./...
       - run: go test -race ./...
       - uses: golangci/golangci-lint-action@v9

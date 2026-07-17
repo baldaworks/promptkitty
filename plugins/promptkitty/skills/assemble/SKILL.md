@@ -5,7 +5,7 @@ description: Discover and assemble a task-specific prompt from the embedded Prom
 
 # PromptKitty Assemble
 
-Use `promptkitty` when installed. Otherwise use the pinned fallback `npx --yes @baldaworks/promptkitty@0.4.0` for every command in the task. Resolve this once and keep the same command form throughout the workflow.
+Use `promptkitty` when installed. Otherwise use the pinned fallback `npx --yes @baldaworks/promptkitty@0.4.2` for every command in the task. Resolve this once and keep the same command form throughout the workflow.
 
 Use only the public PromptKitty CLI. Do not read PromptKit component source files or fetch PromptKit from the network.
 
