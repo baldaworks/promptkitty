@@ -23,7 +23,7 @@ PromptKitty installs two complementary skills:
 | Skill | What it does | Result |
 | --- | --- | --- |
 | **PromptKitty Assemble** | Turns a natural-language engineering task into a catalog search, template selection, required-parameter intake, and final PromptKit assembly. | A raw prompt, or a handoff for project instructions or a subagent profile. |
-| **PromptKitty Author Agent Instructions** | Accepts assembled source—or asks Assemble to prepare it—and adapts the behavior to the selected agent host. | Ready-to-commit project instructions or a provider-native subagent profile. |
+| **PromptKitty Author Agent Instructions** | Accepts assembled source — or asks Assemble to prepare it — and adapts the behavior to the selected agent host. | Ready-to-commit project instructions or a provider-native subagent profile. |
 
 Assemble handles both single-shot and interactive templates. Single-shot templates offer **Raw prompt**, **Project instructions**, or **Subagent profile** as the result. Interactive templates perform their first safe questioning and confirmation phase, fold the answers into the declared parameters, and then produce the final assembled source without executing the later task.
 
