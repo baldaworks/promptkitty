@@ -15,7 +15,7 @@ import (
 )
 
 func TestVersionMatchesRelease(t *testing.T) {
-	if got, want := promptkittycli.Version, "0.3.0"; got != want {
+	if got, want := promptkittycli.Version, "0.4.0"; got != want {
 		t.Fatalf("Version = %q, want %q", got, want)
 	}
 }

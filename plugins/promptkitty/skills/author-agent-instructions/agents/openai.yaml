@@ -1,0 +1,4 @@
+interface:
+  display_name: "PromptKitty Author Agent Instructions"
+  short_description: "Author provider-native agent instructions"
+  default_prompt: "Use $promptkitty:author-agent-instructions to create project instructions or a subagent profile."

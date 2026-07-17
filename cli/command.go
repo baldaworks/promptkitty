@@ -12,7 +12,7 @@ import (
 )
 
 // Version is the PromptKitty application version.
-const Version = "0.3.0"
+const Version = "0.4.0"
 
 // Options configures a reusable PromptKitty command tree.
 type Options struct {

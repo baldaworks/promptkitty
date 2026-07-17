@@ -1,6 +1,7 @@
 package promptkitty
 
 import (
+	"bytes"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -8,14 +9,10 @@ import (
 	"testing"
 )
 
-const releaseVersion = "0.3.0"
+const releaseVersion = "0.4.0"
 
-func TestAssembleSkillUsesOnlyPromptKittyCLI(t *testing.T) {
-	data, err := os.ReadFile(filepath.Join("skills", "assemble", "SKILL.md"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
+func TestAssembleSkillUsesPromptKittyCLIAndHandoff(t *testing.T) {
+	data := readTestFile(t, filepath.Join("skills", "assemble", "SKILL.md"))
 	text := string(data)
 	for _, want := range []string{
 		"name: assemble",
@@ -24,33 +21,88 @@ func TestAssembleSkillUsesOnlyPromptKittyCLI(t *testing.T) {
 		"promptkitty search \"<intent>\" --type template --json",
 		"promptkitty show \"<template>\" --json",
 		"promptkitty assemble \"<template>\"",
-		"--param-file \"<name>=<path>\"",
-		"Return the assembled stdout unchanged.",
-		"Interactive PromptKit templates are also assembled and returned, not executed.",
+		"metadata.mode",
+		"provisional assembly",
+		"first confirmation gate",
+		"Raw prompt",
+		"Project instructions",
+		"Subagent profile",
+		"source-only",
+		"promptkitty-author-agent-instructions",
 	} {
 		if !strings.Contains(text, want) {
 			t.Errorf("assemble skill is missing %q", want)
 		}
 	}
+	assertNoCalleeRoleSyntax(t, text)
+}
 
-	for _, forbidden := range []string{"callee", ".callee", "kind: role", "role create"} {
-		if strings.Contains(strings.ToLower(text), forbidden) {
-			t.Errorf("assemble skill contains forbidden role syntax %q", forbidden)
+func TestAuthorAgentInstructionsSkillUsesPinnedTemplateAndProviderReference(t *testing.T) {
+	data := readTestFile(t, filepath.Join("skills", "author-agent-instructions", "SKILL.md"))
+	text := string(data)
+	for _, want := range []string{
+		"name: author-agent-instructions",
+		"# PromptKitty Author Agent Instructions",
+		"npx --yes @baldaworks/promptkitty@" + releaseVersion,
+		"references/provider-targets.md",
+		"promptkitty show \"author-agent-instructions\" --json",
+		"promptkitty assemble \"author-agent-instructions\"",
+		"--param-file \"behaviors=<source-prompt-path>\"",
+		"explicit confirmation before any write",
+		"Do not implement application code",
+	} {
+		if !strings.Contains(text, want) {
+			t.Errorf("author skill is missing %q", want)
 		}
+	}
+	assertNoCalleeRoleSyntax(t, text)
+
+	reference := string(readTestFile(t, filepath.Join("skills", "author-agent-instructions", "references", "provider-targets.md")))
+	for _, want := range []string{
+		"AGENTS.md",
+		".codex/agents/<slug>.toml",
+		".claude/agents/<slug>.md",
+		".grok/agents/<slug>.md",
+		".github/agents/<slug>.agent.md",
+		".opencode/agents/<slug>.md",
+		".cursor/agents/<slug>.md",
+		"<!-- promptkitty:<slug>:begin -->",
+	} {
+		if !strings.Contains(reference, want) {
+			t.Errorf("provider reference is missing %q", want)
+		}
+	}
+	if strings.Contains(reference, ".cursorrules") {
+		t.Error("provider reference contains deprecated .cursorrules path")
 	}
 }
 
-func TestSkillVariantsHaveMatchingBodies(t *testing.T) {
-	canonical, err := os.ReadFile(filepath.Join("skills", "assemble", "SKILL.md"))
-	if err != nil {
-		t.Fatal(err)
+func TestSkillVariantsHaveMatchingBodiesAndReferences(t *testing.T) {
+	tests := []struct {
+		canonical string
+		prefixed  string
+	}{
+		{
+			canonical: filepath.Join("skills", "assemble", "SKILL.md"),
+			prefixed:  filepath.Join("prefixed-skills", "promptkitty-assemble", "SKILL.md"),
+		},
+		{
+			canonical: filepath.Join("skills", "author-agent-instructions", "SKILL.md"),
+			prefixed:  filepath.Join("prefixed-skills", "promptkitty-author-agent-instructions", "SKILL.md"),
+		},
 	}
-	prefixed, err := os.ReadFile(filepath.Join("prefixed-skills", "promptkitty-assemble", "SKILL.md"))
-	if err != nil {
-		t.Fatal(err)
+	for _, test := range tests {
+		canonical := readTestFile(t, test.canonical)
+		prefixed := readTestFile(t, test.prefixed)
+		if skillBody(t, canonical) != skillBody(t, prefixed) {
+			t.Errorf("%s and %s bodies differ", test.canonical, test.prefixed)
+		}
 	}
-	if skillBody(t, canonical) != skillBody(t, prefixed) {
-		t.Fatal("canonical and prefixed skill bodies differ")
+
+	canonicalReference := readTestFile(t, filepath.Join("skills", "author-agent-instructions", "references", "provider-targets.md"))
+	prefixedReference := readTestFile(t, filepath.Join("prefixed-skills", "promptkitty-author-agent-instructions", "references", "provider-targets.md"))
+	if !bytes.Equal(canonicalReference, prefixedReference) {
+		t.Fatal("canonical and prefixed provider references differ")
 	}
 }
 
@@ -61,14 +113,12 @@ func TestPluginManifests(t *testing.T) {
 		filepath.Join(".grok-plugin", "plugin.json"):   "./prefixed-skills/",
 		filepath.Join(".plugin", "plugin.json"):        "./prefixed-skills/",
 	} {
-		data, err := os.ReadFile(path)
-		if err != nil {
-			t.Fatal(err)
-		}
+		data := readTestFile(t, path)
 		var manifest struct {
-			Name    string `json:"name"`
-			Version string `json:"version"`
-			Skills  string `json:"skills"`
+			Name        string `json:"name"`
+			Version     string `json:"version"`
+			Description string `json:"description"`
+			Skills      string `json:"skills"`
 		}
 		if err := json.Unmarshal(data, &manifest); err != nil {
 			t.Fatalf("parse %s: %v", path, err)
@@ -76,30 +126,37 @@ func TestPluginManifests(t *testing.T) {
 		if manifest.Name != "promptkitty" || manifest.Version != releaseVersion || manifest.Skills != skills {
 			t.Errorf("%s = %#v", path, manifest)
 		}
+		if !strings.Contains(manifest.Description, "agent instructions") {
+			t.Errorf("%s description does not mention agent instructions", path)
+		}
 	}
 }
 
 func TestCodexSkillMetadata(t *testing.T) {
-	data, err := os.ReadFile(filepath.Join("skills", "assemble", "agents", "openai.yaml"))
-	if err != nil {
-		t.Fatal(err)
+	tests := map[string][]string{
+		filepath.Join("skills", "assemble", "agents", "openai.yaml"): {
+			`display_name: "PromptKitty Assemble"`,
+			`short_description: "Assemble raw and interactive PromptKit prompts"`,
+			`default_prompt: "Use $promptkitty:assemble`,
+		},
+		filepath.Join("skills", "author-agent-instructions", "agents", "openai.yaml"): {
+			`display_name: "PromptKitty Author Agent Instructions"`,
+			`short_description: "Author provider-native agent instructions"`,
+			`default_prompt: "Use $promptkitty:author-agent-instructions`,
+		},
 	}
-	for _, want := range []string{
-		`display_name: "PromptKitty Assemble"`,
-		`short_description: "Assemble task-specific PromptKit prompts"`,
-		`default_prompt: "Use $promptkitty:assemble to assemble a prompt for my task."`,
-	} {
-		if !strings.Contains(string(data), want) {
-			t.Errorf("openai.yaml is missing %q", want)
+	for path, fragments := range tests {
+		data := string(readTestFile(t, path))
+		for _, want := range fragments {
+			if !strings.Contains(data, want) {
+				t.Errorf("%s is missing %q", path, want)
+			}
 		}
 	}
 }
 
 func TestNPMDistributionIsStaticAndScoped(t *testing.T) {
-	data, err := os.ReadFile(filepath.Join("..", "..", ".omnidist", "omnidist.yaml"))
-	if err != nil {
-		t.Fatal(err)
-	}
+	data := readTestFile(t, filepath.Join("..", "..", ".omnidist", "omnidist.yaml"))
 	for _, want := range []string{
 		"name: promptkitty",
 		"main: ./cmd/promptkitty",
@@ -115,24 +172,42 @@ func TestNPMDistributionIsStaticAndScoped(t *testing.T) {
 	}
 }
 
-func TestREADMEDocumentsNpxAndEverySetupTarget(t *testing.T) {
-	data, err := os.ReadFile(filepath.Join("..", "..", "README.md"))
-	if err != nil {
-		t.Fatal(err)
-	}
+func TestREADMEDocumentsNpxSkillsAndEverySetupTarget(t *testing.T) {
+	data := readTestFile(t, filepath.Join("..", "..", "README.md"))
 	text := string(data)
 	for _, want := range []string{
-		"## PromptKitty Assemble for task-specific engineering prompts",
+		"## PromptKitty Assemble and reusable agent instructions",
 		"npx --yes @baldaworks/promptkitty@latest setup codex",
 		"| Codex | `promptkitty setup codex` |",
 		"| Claude Code | `promptkitty setup claude` |",
 		"| Grok Build | `promptkitty setup grok` |",
 		"| Copilot CLI | `promptkitty setup copilot` |",
 		"| OpenCode | `promptkitty setup opencode` |",
+		"| Cursor | `promptkitty setup cursor` |",
+		"PromptKitty Author Agent Instructions",
+		"provisional assembly",
 		"CGO_ENABLED=0",
 	} {
 		if !strings.Contains(text, want) {
 			t.Errorf("README is missing %q", want)
+		}
+	}
+}
+
+func readTestFile(t *testing.T, path string) []byte {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return data
+}
+
+func assertNoCalleeRoleSyntax(t *testing.T, text string) {
+	t.Helper()
+	for _, forbidden := range []string{"callee", ".callee", "kind: role", "role create"} {
+		if strings.Contains(strings.ToLower(text), forbidden) {
+			t.Errorf("skill contains forbidden role syntax %q", forbidden)
 		}
 	}
 }

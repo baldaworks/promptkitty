@@ -1,7 +1,7 @@
 {
   "name": "promptkitty",
-  "version": "0.3.0",
-  "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
+  "version": "0.4.0",
+  "description": "Assemble PromptKit prompts and author provider-native agent instructions.",
   "author": {
     "name": "Baldaworks"
   },

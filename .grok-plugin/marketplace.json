@@ -4,12 +4,12 @@
     "name": "Baldaworks",
     "url": "https://github.com/baldaworks"
   },
-  "description": "Marketplace for task-specific PromptKit prompt assembly in Grok Build.",
+  "description": "Marketplace for PromptKit assembly and agent instruction authoring in Grok Build.",
   "plugins": [
     {
       "name": "promptkitty",
-      "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
-      "version": "0.3.0",
+      "description": "Assemble PromptKit prompts and author provider-native agent instructions.",
+      "version": "0.4.0",
       "source": "./plugins/promptkitty",
       "homepage": "https://github.com/baldaworks/promptkitty",
       "keywords": ["promptkit", "prompts", "assembly", "cli"]

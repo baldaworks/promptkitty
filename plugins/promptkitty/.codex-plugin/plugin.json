@@ -1,7 +1,7 @@
 {
   "name": "promptkitty",
-  "version": "0.3.0",
-  "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
+  "version": "0.4.0",
+  "description": "Assemble PromptKit prompts and author provider-native agent instructions.",
   "author": {
     "name": "Baldaworks",
     "url": "https://github.com/baldaworks"
@@ -13,15 +13,15 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "PromptKitty",
-    "shortDescription": "Task-specific PromptKit prompt assembly.",
-    "longDescription": "Discover an embedded PromptKit template, gather its required parameters, and assemble a complete prompt.",
+    "shortDescription": "Prompt assembly and reusable agent instructions.",
+    "longDescription": "Discover and assemble embedded PromptKit templates, run interactive intake, and author provider-native project instructions or subagent profiles.",
     "developerName": "Baldaworks",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
     "defaultPrompt": [
       "$promptkitty:assemble Assemble a prompt for my task.",
-      "$promptkitty:assemble Find the right code-review template.",
-      "$promptkitty:assemble Create a requirements-document prompt."
+      "$promptkitty:assemble Run an interactive PromptKit intake.",
+      "$promptkitty:author-agent-instructions Create a project subagent."
     ]
   }
 }

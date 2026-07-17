@@ -8,9 +8,9 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/baldaworks/promptkitty.svg)](https://pkg.go.dev/github.com/baldaworks/promptkitty)
 [![License: MIT](https://img.shields.io/github/license/baldaworks/promptkitty)](LICENSE)
 
-## PromptKitty Assemble for task-specific engineering prompts
+## PromptKitty Assemble and reusable agent instructions
 
-PromptKitty packages Microsoft PromptKit as a deterministic Go library and a standalone CLI. Describe the engineering task, find the most relevant template with weighted BM25 search, inspect its parameters, and assemble a complete prompt without reading external component files or contacting a service.
+PromptKitty packages Microsoft PromptKit as a deterministic Go library and a standalone CLI. Describe the engineering task, find the most relevant template with weighted BM25 search, run its intake, and assemble a complete prompt without reading external component files or contacting a service. A companion skill turns the result into provider-native project instructions or subagent profiles.
 
 The embedded snapshot is PromptKit `v0.6.1`: 15 personas, 56 protocols, 24 formats, 5 taxonomies, 71 templates, and 4 pipelines. Every declared parameter must be resolved before assembly succeeds.
 
@@ -26,10 +26,10 @@ npx --yes @baldaworks/promptkitty@latest setup codex
 Or install the native Go command:
 
 ```bash
-go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.3.0
+go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.4.0
 ```
 
-PromptKitty can install its Assemble integration for five agent hosts:
+PromptKitty can install its two skills for six agent hosts:
 
 | Host | Setup |
 | --- | --- |
@@ -38,10 +38,11 @@ PromptKitty can install its Assemble integration for five agent hosts:
 | Grok Build | `promptkitty setup grok` |
 | Copilot CLI | `promptkitty setup copilot` |
 | OpenCode | `promptkitty setup opencode` |
+| Cursor | `promptkitty setup cursor` |
 
-Codex, Claude Code, Grok Build, and Copilot CLI setup use the repository's plugin marketplace. OpenCode setup writes `.opencode/skills/promptkitty-assemble/SKILL.md` and `.opencode/commands/promptkitty.md` into the current project. Existing OpenCode files are preserved; use `--force` only when they should be replaced. Host CLIs and credentials remain external.
+Codex, Claude Code, Grok Build, and Copilot CLI setup use the repository's plugin marketplace. OpenCode setup writes both skills and matching commands under `.opencode/`; Cursor setup writes both skills under `.cursor/skills/`. Existing local files are preserved; use `--force` only when known PromptKitty assets should be replaced. Host CLIs and credentials remain external.
 
-Invoke the installed skill as `$promptkitty:assemble` in Codex, `/promptkitty:assemble` in Claude Code, `/promptkitty-assemble` in Grok Build or Copilot CLI, and `/promptkitty` in OpenCode.
+The installed skills are **PromptKitty Assemble** and **PromptKitty Author Agent Instructions**. Invoke Assemble as `$promptkitty:assemble` in Codex, `/promptkitty:assemble` in Claude Code, `/promptkitty-assemble` in Grok Build or Copilot CLI, and `/promptkitty` in OpenCode. The authoring skill uses the corresponding `author-agent-instructions` name; OpenCode exposes `/promptkitty-author-agent-instructions`. Cursor discovers both as native Agent Skills.
 
 ## Quick start
 
@@ -64,6 +65,23 @@ promptkitty assemble author-requirements-doc \
 
 `assemble` writes Markdown to stdout. Use `--output` only when a file is wanted, `--json` for the complete assembly result, and repeatable `--param-file`, `--protocol`, and `--taxonomy` flags for multiline or additional composition inputs.
 
+PromptKitty Assemble inspects `metadata.mode`. Single-shot templates offer raw output, project instructions, or a subagent profile. Interactive templates first run a provisional assembly, ask the first safe round of template-specific questions, fold confirmed answers into declared parameters, and only then perform the final assembly. The later workflow remains in the returned prompt and is not executed automatically.
+
+## Project instructions and subagents
+
+PromptKitty Author Agent Instructions uses the pinned PromptKit `author-agent-instructions` template, with current provider paths supplied by PromptKitty:
+
+| Host | Project instructions | Subagent profile |
+| --- | --- | --- |
+| Codex | `AGENTS.md` | `.codex/agents/<name>.toml` |
+| Claude Code | `.claude/rules/<name>.md` | `.claude/agents/<name>.md` |
+| Grok Build | `.grok/rules/<name>.md` | `.grok/agents/<name>.md` |
+| Copilot CLI | `.github/instructions/*.instructions.md` | `.github/agents/<name>.agent.md` |
+| OpenCode | `AGENTS.md` | `.opencode/agents/<name>.md` |
+| Cursor | `.cursor/rules/<name>.mdc` | `.cursor/agents/<name>.md` |
+
+The authoring skill previews a manifest and diffs before writing. Project guidance is maintained inside stable PromptKitty markers, while existing subagent profiles require explicit overwrite confirmation. Codex and OpenCode share one managed `AGENTS.md` block when both are selected.
+
 ## BM25 relevance search
 
 `search` uses the in-memory BM25 index from [vecgo](https://github.com/hupe1980/vecgo). PromptKitty indexes component names, descriptions, remaining metadata, and complete Markdown bodies with weights `4 / 2 / 1 / 1`.
@@ -85,7 +103,7 @@ promptkitty list [--type ...] [--category ...] [--language ...] [--json]
 promptkitty search <query> [--type ...] [--json]
 promptkitty show <name> [--json]
 promptkitty assemble <template> [composition flags]
-promptkitty setup <codex|claude|grok|copilot|opencode> [--force]
+promptkitty setup <codex|claude|grok|copilot|opencode|cursor> [--force]
 ```
 
 Applications that already use Cobra can mount the same command tree:
@@ -102,7 +120,7 @@ The reusable `cli` package keeps successful output on stdout and diagnostics on 
 Install the module:
 
 ```bash
-go get github.com/baldaworks/promptkitty@v0.3.0
+go get github.com/baldaworks/promptkitty@v0.4.0
 ```
 
 Load the embedded catalog and assemble a fully parameterized prompt:
@@ -155,7 +173,7 @@ The generator resolves that ref through GitHub, downloads the archive, copies su
 
 ## About PromptKit
 
-[Microsoft PromptKit](https://github.com/microsoft/PromptKit) is a composable prompt engineering library organized around personas, protocols, taxonomies, formats, templates, and pipelines. Its [bootstrap workflow](https://github.com/microsoft/PromptKit/blob/main/bootstrap.md) inspired PromptKitty Assemble; PromptKitty adapts discovery and parameter gathering to the stable `search`, `show`, and `assemble` CLI instead of reading or rewriting upstream files.
+[Microsoft PromptKit](https://github.com/microsoft/PromptKit) is a composable prompt engineering library organized around personas, protocols, taxonomies, formats, templates, and pipelines. Its [bootstrap workflow](https://github.com/microsoft/PromptKit/blob/main/bootstrap.md) inspired PromptKitty's output chooser and agent-instruction authoring. PromptKitty adapts discovery, interactive intake, and parameter gathering to the stable `search`, `show`, and `assemble` CLI instead of reading or rewriting upstream files.
 
 ## License
 

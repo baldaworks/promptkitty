@@ -20,9 +20,11 @@ const (
 )
 
 type setupTarget struct {
-	prepare  func(context.Context, io.Writer) error
-	commands [][]string
-	install  func(bool) (setupInstallResult, error)
+	prepare          func(context.Context, io.Writer) error
+	commands         [][]string
+	install          func(bool) (setupInstallResult, error)
+	installedMessage string
+	unchangedMessage string
 }
 
 type setupInstallResult struct {
@@ -32,20 +34,49 @@ type setupInstallResult struct {
 
 var runSetupCommand = runSetupCommandDefault
 
-//go:embed assets/opencode/skills/promptkitty-assemble/SKILL.md assets/opencode/commands/promptkitty.md
-var openCodeAssets embed.FS
+//go:embed assets/opencode assets/cursor
+var setupAssets embed.FS
 
-var openCodeAssetFiles = []struct {
+type setupAssetFile struct {
 	source      string
 	destination string
-}{
+}
+
+var openCodeAssetFiles = []setupAssetFile{
 	{
 		source:      "assets/opencode/skills/promptkitty-assemble/SKILL.md",
 		destination: ".opencode/skills/promptkitty-assemble/SKILL.md",
 	},
 	{
+		source:      "assets/opencode/skills/promptkitty-author-agent-instructions/SKILL.md",
+		destination: ".opencode/skills/promptkitty-author-agent-instructions/SKILL.md",
+	},
+	{
+		source:      "assets/opencode/skills/promptkitty-author-agent-instructions/references/provider-targets.md",
+		destination: ".opencode/skills/promptkitty-author-agent-instructions/references/provider-targets.md",
+	},
+	{
 		source:      "assets/opencode/commands/promptkitty.md",
 		destination: ".opencode/commands/promptkitty.md",
+	},
+	{
+		source:      "assets/opencode/commands/promptkitty-author-agent-instructions.md",
+		destination: ".opencode/commands/promptkitty-author-agent-instructions.md",
+	},
+}
+
+var cursorAssetFiles = []setupAssetFile{
+	{
+		source:      "assets/cursor/skills/promptkitty-assemble/SKILL.md",
+		destination: ".cursor/skills/promptkitty-assemble/SKILL.md",
+	},
+	{
+		source:      "assets/cursor/skills/promptkitty-author-agent-instructions/SKILL.md",
+		destination: ".cursor/skills/promptkitty-author-agent-instructions/SKILL.md",
+	},
+	{
+		source:      "assets/cursor/skills/promptkitty-author-agent-instructions/references/provider-targets.md",
+		destination: ".cursor/skills/promptkitty-author-agent-instructions/references/provider-targets.md",
 	},
 }
 
@@ -53,7 +84,7 @@ func setupCommand() *cobra.Command {
 	var force bool
 
 	cmd := &cobra.Command{
-		Use:   "setup <codex|claude|grok|copilot|opencode>",
+		Use:   "setup <codex|claude|grok|copilot|opencode|cursor>",
 		Short: "Install the PromptKitty integration for an agent host",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -65,7 +96,7 @@ func setupCommand() *cobra.Command {
 			return installSetupTarget(cmd.Context(), cmd.OutOrStdout(), cmd.ErrOrStderr(), target, force)
 		},
 	}
-	cmd.Flags().BoolVar(&force, "force", false, "overwrite existing OpenCode setup files")
+	cmd.Flags().BoolVar(&force, "force", false, "overwrite existing local setup files")
 
 	return cmd
 }
@@ -90,12 +121,12 @@ func installSetupTarget(ctx context.Context, stdout, stderr io.Writer, target se
 		return err
 	}
 	if len(result.created) > 0 {
-		if _, err := fmt.Fprintln(stdout, "Installed the PromptKitty Assemble skill and command for OpenCode."); err != nil {
+		if _, err := fmt.Fprintln(stdout, target.installedMessage); err != nil {
 			return err
 		}
 	}
 	if len(result.unchanged) > 0 {
-		if _, err := fmt.Fprintln(stdout, "Existing OpenCode PromptKitty files were left unchanged."); err != nil {
+		if _, err := fmt.Fprintln(stdout, target.unchangedMessage); err != nil {
 			return err
 		}
 	}
@@ -135,10 +166,20 @@ func setupTargetFor(name string) (setupTarget, error) {
 			},
 		}, nil
 	case "opencode":
-		return setupTarget{install: writeOpenCodeIntegration}, nil
+		return setupTarget{
+			install:          writeOpenCodeIntegration,
+			installedMessage: "Installed the PromptKitty skills and commands for OpenCode.",
+			unchangedMessage: "Existing OpenCode PromptKitty files were left unchanged.",
+		}, nil
+	case "cursor":
+		return setupTarget{
+			install:          writeCursorIntegration,
+			installedMessage: "Installed the PromptKitty skills for Cursor.",
+			unchangedMessage: "Existing Cursor PromptKitty files were left unchanged.",
+		}, nil
 	default:
 		return setupTarget{}, fmt.Errorf(
-			"unsupported setup target %q (want codex, claude, grok, copilot, or opencode)",
+			"unsupported setup target %q (want codex, claude, grok, copilot, opencode, or cursor)",
 			name,
 		)
 	}
@@ -170,15 +211,23 @@ func prepareCodexMarketplace(ctx context.Context, stderr io.Writer) error {
 }
 
 func writeOpenCodeIntegration(force bool) (setupInstallResult, error) {
+	return writeLocalIntegration("OpenCode", openCodeAssetFiles, force)
+}
+
+func writeCursorIntegration(force bool) (setupInstallResult, error) {
+	return writeLocalIntegration("Cursor", cursorAssetFiles, force)
+}
+
+func writeLocalIntegration(host string, assets []setupAssetFile, force bool) (setupInstallResult, error) {
 	result := setupInstallResult{}
-	for _, asset := range openCodeAssetFiles {
-		content, err := openCodeAssets.ReadFile(asset.source)
+	for _, asset := range assets {
+		content, err := setupAssets.ReadFile(asset.source)
 		if err != nil {
-			return setupInstallResult{}, fmt.Errorf("read embedded OpenCode asset %q: %w", asset.source, err)
+			return setupInstallResult{}, fmt.Errorf("read embedded %s asset %q: %w", host, asset.source, err)
 		}
 		created, err := writeSetupFile(filepath.FromSlash(asset.destination), content, force)
 		if err != nil {
-			return setupInstallResult{}, fmt.Errorf("write OpenCode asset %q: %w", asset.destination, err)
+			return setupInstallResult{}, fmt.Errorf("write %s asset %q: %w", host, asset.destination, err)
 		}
 		if created {
 			result.created = append(result.created, asset.destination)

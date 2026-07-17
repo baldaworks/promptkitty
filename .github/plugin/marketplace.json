@@ -4,14 +4,14 @@
     "name": "Baldaworks"
   },
   "metadata": {
-    "description": "Task-specific PromptKit prompt assembly for GitHub Copilot CLI.",
-    "version": "0.3.0"
+    "description": "PromptKit assembly and agent instruction authoring for GitHub Copilot CLI.",
+    "version": "0.4.0"
   },
   "plugins": [
     {
       "name": "promptkitty",
-      "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
-      "version": "0.3.0",
+      "description": "Assemble PromptKit prompts and author provider-native agent instructions.",
+      "version": "0.4.0",
       "source": "./plugins/promptkitty",
       "author": {
         "name": "Baldaworks",
