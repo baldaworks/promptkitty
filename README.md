@@ -46,7 +46,7 @@ PromptKitty supports six agent hosts. Setup installs both skills:
 | Claude Code | `npx --yes @baldaworks/promptkitty@latest setup claude` | `/promptkitty:assemble` | `/promptkitty:author-agent-instructions` |
 | Grok Build | `npx --yes @baldaworks/promptkitty@latest setup grok` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |
 | Copilot CLI | `npx --yes @baldaworks/promptkitty@latest setup copilot` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |
-| OpenCode | `npx --yes @baldaworks/promptkitty@latest setup opencode` | `/promptkitty` | `/promptkitty-author-agent-instructions` |
+| OpenCode | `npx --yes @baldaworks/promptkitty@latest setup opencode` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |
 | Cursor | `npx --yes @baldaworks/promptkitty@latest setup cursor` | `promptkitty-assemble` skill | `promptkitty-author-agent-instructions` skill |
 
 Codex, Claude Code, Grok Build, and Copilot CLI setup use the repository's plugin marketplace. OpenCode setup writes both skills and matching commands under `.opencode/`; Cursor setup writes both skills under `.cursor/skills/`. Existing local files are preserved; use `--force` only when known PromptKitty assets should be replaced. Host CLIs and credentials remain external.

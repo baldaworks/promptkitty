@@ -208,7 +208,7 @@ func TestREADMEDocumentsAgentSkillsBeforeCLIAndEverySetupTarget(t *testing.T) {
 		"| Claude Code | `npx --yes @baldaworks/promptkitty@latest setup claude` | `/promptkitty:assemble` | `/promptkitty:author-agent-instructions` |",
 		"| Grok Build | `npx --yes @baldaworks/promptkitty@latest setup grok` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |",
 		"| Copilot CLI | `npx --yes @baldaworks/promptkitty@latest setup copilot` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |",
-		"| OpenCode | `npx --yes @baldaworks/promptkitty@latest setup opencode` | `/promptkitty` | `/promptkitty-author-agent-instructions` |",
+		"| OpenCode | `npx --yes @baldaworks/promptkitty@latest setup opencode` | `/promptkitty-assemble` | `/promptkitty-author-agent-instructions` |",
 		"| Cursor | `npx --yes @baldaworks/promptkitty@latest setup cursor` | `promptkitty-assemble` skill | `promptkitty-author-agent-instructions` skill |",
 		"$promptkitty:assemble Write a requirements document",
 		"$promptkitty:author-agent-instructions Create a spec-writing subagent",
