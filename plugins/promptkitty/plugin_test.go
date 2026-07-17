@@ -162,6 +162,16 @@ func TestNPMDistributionIsStaticAndScoped(t *testing.T) {
 		"main: ./cmd/promptkitty",
 		"cgo: false",
 		"package: '@baldaworks/promptkitty'",
+		"license: MIT",
+		"repository-url: https://github.com/baldaworks/promptkitty",
+		"- promptkit",
+		"- ai-agents",
+		"- agent-skills",
+		"- prompt-engineering",
+		"- cli",
+		"- go",
+		"- npm",
+		"- plugin",
 	} {
 		if !strings.Contains(string(data), want) {
 			t.Errorf("omnidist config is missing %q", want)
@@ -169,6 +179,19 @@ func TestNPMDistributionIsStaticAndScoped(t *testing.T) {
 	}
 	if strings.Contains(string(data), "uv:") {
 		t.Error("omnidist config unexpectedly enables uv publishing")
+	}
+
+	workflow := string(readTestFile(t, filepath.Join("..", "..", ".github", "workflows", "omnidist-release.yml")))
+	for _, want := range []string{
+		"description=PromptKit workflows for coding agents, the command line, and Go.",
+		"homepage=https://github.com/baldaworks/promptkitty#readme",
+		"bugs.url=https://github.com/baldaworks/promptkitty/issues",
+		"author.name=Baldaworks",
+		"author.url=https://github.com/baldaworks",
+	} {
+		if !strings.Contains(workflow, want) {
+			t.Errorf("npm release workflow is missing %q", want)
+		}
 	}
 }
 
