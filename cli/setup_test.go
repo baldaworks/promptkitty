@@ -98,7 +98,7 @@ func TestLocalSetupInstallsPreservesAndForcesAssets(t *testing.T) {
 			name:      "opencode",
 			assets:    openCodeAssetFiles,
 			install:   writeOpenCodeIntegration,
-			preserved: ".opencode/commands/promptkitty.md",
+			preserved: ".opencode/commands/promptkitty-assemble.md",
 		},
 		{
 			name:      "cursor",
@@ -197,7 +197,7 @@ func TestLocalSetupAssetsMatchPrefixedPluginSkills(t *testing.T) {
 
 func TestOpenCodeCommandsLoadMatchingSkills(t *testing.T) {
 	tests := map[string][]string{
-		"assets/opencode/commands/promptkitty.md": {
+		"assets/opencode/commands/promptkitty-assemble.md": {
 			"Load the `promptkitty-assemble` skill",
 			"$ARGUMENTS",
 		},

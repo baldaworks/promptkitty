@@ -56,8 +56,8 @@ var openCodeAssetFiles = []setupAssetFile{
 		destination: ".opencode/skills/promptkitty-author-agent-instructions/references/provider-targets.md",
 	},
 	{
-		source:      "assets/opencode/commands/promptkitty.md",
-		destination: ".opencode/commands/promptkitty.md",
+		source:      "assets/opencode/commands/promptkitty-assemble.md",
+		destination: ".opencode/commands/promptkitty-assemble.md",
 	},
 	{
 		source:      "assets/opencode/commands/promptkitty-author-agent-instructions.md",
