@@ -1,0 +1,26 @@
+{
+  "name": "promptkitty",
+  "owner": {
+    "name": "Baldaworks"
+  },
+  "metadata": {
+    "description": "Task-specific PromptKit prompt assembly for GitHub Copilot CLI.",
+    "version": "0.3.0"
+  },
+  "plugins": [
+    {
+      "name": "promptkitty",
+      "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
+      "version": "0.3.0",
+      "source": "./plugins/promptkitty",
+      "author": {
+        "name": "Baldaworks",
+        "url": "https://github.com/baldaworks"
+      },
+      "homepage": "https://github.com/baldaworks/promptkitty",
+      "repository": "https://github.com/baldaworks/promptkitty",
+      "license": "MIT",
+      "keywords": ["promptkit", "prompts", "assembly", "cli"]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "promptkitty",
+  "version": "0.3.0",
+  "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
+  "author": {
+    "name": "Baldaworks"
+  },
+  "skills": "./skills/"
+}

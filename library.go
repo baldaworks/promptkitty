@@ -40,6 +40,7 @@ type Library struct {
 	byName     map[string][]int
 	bodies     map[string]string
 	pipelines  []Pipeline
+	search     searchIndex
 }
 
 // New loads the pinned embedded PromptKit component library.
@@ -155,6 +156,10 @@ func NewFromFS(fsys fs.FS, root string) (*Library, error) {
 		key := strings.ToLower(component.Name)
 		library.byName[key] = append(library.byName[key], index)
 	}
+	library.search, err = newSearchIndex(library.components, library.bodies)
+	if err != nil {
+		return nil, fmt.Errorf("build PromptKit search index: %w", err)
+	}
 
 	for _, name := range sortedKeys(manifest.Pipelines) {
 		rawPipeline := manifest.Pipelines[name]
@@ -190,19 +195,17 @@ func (l *Library) List(filter Filter) []Component {
 	return result
 }
 
-// Search performs a case-insensitive substring search over component names and
-// descriptions, then applies filter.
+// Search ranks catalog components by their relevance to query, then applies
+// filter. Search is deterministic and uses only the loaded catalog.
 func (l *Library) Search(query string, filter Filter) []Component {
-	query = strings.ToLower(strings.TrimSpace(query))
-	result := make([]Component, 0)
-	for _, component := range l.components {
-		if !matchesFilter(component, filter) {
-			continue
-		}
-		haystack := strings.ToLower(component.Name + "\n" + component.Description)
-		if strings.Contains(haystack, query) {
-			result = append(result, cloneComponent(component))
-		}
+	if strings.TrimSpace(query) == "" {
+		return l.List(filter)
+	}
+
+	indices := l.search.rank(query, l.components, filter)
+	result := make([]Component, 0, len(indices))
+	for _, index := range indices {
+		result = append(result, cloneComponent(l.components[index]))
 	}
 
 	return result

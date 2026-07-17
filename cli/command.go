@@ -12,7 +12,7 @@ import (
 )
 
 // Version is the PromptKitty application version.
-const Version = "0.2.1"
+const Version = "0.3.0"
 
 // Options configures a reusable PromptKitty command tree.
 type Options struct {
@@ -50,7 +50,7 @@ func NewCommand(options Options) *cobra.Command {
 		Args:          cobra.NoArgs,
 	}
 	cmd.CompletionOptions.DisableDefaultCmd = true
-	cmd.AddCommand(listCommand(load), searchCommand(load), showCommand(load), assembleCommand(load))
+	cmd.AddCommand(listCommand(load), searchCommand(load), showCommand(load), assembleCommand(load), setupCommand())
 
 	return cmd
 }

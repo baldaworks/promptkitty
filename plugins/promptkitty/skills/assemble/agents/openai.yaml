@@ -1,0 +1,4 @@
+interface:
+  display_name: "PromptKitty Assemble"
+  short_description: "Assemble task-specific PromptKit prompts"
+  default_prompt: "Use $promptkitty:assemble to assemble a prompt for my task."

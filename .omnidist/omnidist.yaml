@@ -1,0 +1,36 @@
+profiles:
+    default:
+        tool:
+            name: promptkitty
+            main: ./cmd/promptkitty
+        version:
+            source: git-tag
+        targets:
+            - os: darwin
+              arch: amd64
+            - os: darwin
+              arch: arm64
+            - os: linux
+              arch: amd64
+            - os: linux
+              arch: arm64
+            - os: windows
+              arch: amd64
+        build:
+            ldflags: -s -w
+            tags: []
+            cgo: false
+        distributions:
+            npm:
+                package: '@baldaworks/promptkitty'
+                registry: https://registry.npmjs.org
+                access: public
+                publish-auth: token
+                repository-url: https://github.com/baldaworks/promptkitty
+                license: MIT
+                keywords:
+                    - promptkit
+                    - prompts
+                    - assembly
+                    - cli
+                include-readme: true

@@ -1,0 +1,20 @@
+{
+  "name": "promptkitty",
+  "interface": {
+    "displayName": "PromptKitty"
+  },
+  "plugins": [
+    {
+      "name": "promptkitty",
+      "source": {
+        "source": "local",
+        "path": "./plugins/promptkitty"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

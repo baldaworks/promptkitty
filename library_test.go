@@ -2,6 +2,7 @@ package promptkitty
 
 import (
 	"errors"
+	"slices"
 	"testing"
 )
 
@@ -91,5 +92,63 @@ func TestCatalogSearchShowAndCopies(t *testing.T) {
 	var notFound *NotFoundError
 	if !errors.As(err, &notFound) {
 		t.Fatalf("Show(missing) error = %v, want NotFoundError", err)
+	}
+}
+
+func TestSearchRanksNaturalLanguageQueries(t *testing.T) {
+	t.Parallel()
+
+	library, err := New()
+	if err != nil {
+		t.Fatalf("New() error: %v", err)
+	}
+
+	tests := []struct {
+		query string
+		want  string
+	}{
+		{query: "write a requirements document", want: "author-requirements-doc"},
+		{query: "review Go code", want: "review-code"},
+		{query: "find root cause of a memory leak bug", want: "investigate-bug"},
+	}
+	for _, test := range tests {
+		t.Run(test.want, func(t *testing.T) {
+			results := library.Search(test.query, Filter{Type: ComponentTemplate})
+			if len(results) == 0 {
+				t.Fatalf("Search(%q) returned no templates", test.query)
+			}
+			if got := results[0].Name; got != test.want {
+				t.Fatalf("Search(%q) first result = %q, want %q", test.query, got, test.want)
+			}
+		})
+	}
+}
+
+func TestSearchCompatibilityAndCopies(t *testing.T) {
+	t.Parallel()
+
+	library, err := New()
+	if err != nil {
+		t.Fatalf("New() error: %v", err)
+	}
+
+	allTemplates := library.List(Filter{Type: ComponentTemplate})
+	if results := library.Search(" \t\n", Filter{Type: ComponentTemplate}); !slices.EqualFunc(results, allTemplates, func(a, b Component) bool {
+		return a.Name == b.Name && a.Type == b.Type
+	}) {
+		t.Fatal("Search(empty) does not preserve List order")
+	}
+	if results := library.Search("qzjx7f20e40a", Filter{}); len(results) != 0 {
+		t.Fatalf("Search(missing) returned %d results, want none", len(results))
+	}
+
+	results := library.Search("memory safety", Filter{Type: ComponentProtocol})
+	if len(results) == 0 {
+		t.Fatal("Search(memory safety) returned no protocols")
+	}
+	results[0].Metadata["name"] = "mutated"
+	again := library.Search("memory safety", Filter{Type: ComponentProtocol})
+	if len(again) == 0 || again[0].Metadata["name"] == "mutated" {
+		t.Fatal("Search() returned mutable library metadata")
 	}
 }

@@ -1,0 +1,27 @@
+{
+  "name": "promptkitty",
+  "version": "0.3.0",
+  "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
+  "author": {
+    "name": "Baldaworks",
+    "url": "https://github.com/baldaworks"
+  },
+  "homepage": "https://github.com/baldaworks/promptkitty",
+  "repository": "https://github.com/baldaworks/promptkitty",
+  "license": "MIT",
+  "keywords": ["promptkit", "prompts", "assembly", "cli"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "PromptKitty",
+    "shortDescription": "Task-specific PromptKit prompt assembly.",
+    "longDescription": "Discover an embedded PromptKit template, gather its required parameters, and assemble a complete prompt.",
+    "developerName": "Baldaworks",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "defaultPrompt": [
+      "$promptkitty:assemble Assemble a prompt for my task.",
+      "$promptkitty:assemble Find the right code-review template.",
+      "$promptkitty:assemble Create a requirements-document prompt."
+    ]
+  }
+}

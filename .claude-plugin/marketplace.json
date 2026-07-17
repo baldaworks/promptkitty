@@ -1,0 +1,21 @@
+{
+  "name": "promptkitty",
+  "owner": {
+    "name": "Baldaworks"
+  },
+  "metadata": {
+    "description": "Task-specific PromptKit prompt assembly for Claude Code.",
+    "version": "0.3.0"
+  },
+  "plugins": [
+    {
+      "name": "promptkitty",
+      "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
+      "version": "0.3.0",
+      "author": {
+        "name": "Baldaworks"
+      },
+      "source": "./plugins/promptkitty"
+    }
+  ]
+}

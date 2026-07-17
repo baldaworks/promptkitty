@@ -1,0 +1,14 @@
+{
+  "name": "promptkitty",
+  "version": "0.3.0",
+  "description": "Discover and assemble task-specific prompts from embedded PromptKit templates.",
+  "author": {
+    "name": "Baldaworks",
+    "url": "https://github.com/baldaworks"
+  },
+  "homepage": "https://github.com/baldaworks/promptkitty",
+  "repository": "https://github.com/baldaworks/promptkitty",
+  "license": "MIT",
+  "keywords": ["promptkit", "prompts", "assembly", "cli"],
+  "skills": "./prefixed-skills/"
+}
