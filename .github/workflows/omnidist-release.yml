@@ -80,6 +80,7 @@ jobs:
     permissions:
       contents: read
     env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
       NPM_PUBLISH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
     steps:
       - uses: actions/checkout@v7
