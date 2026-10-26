@@ -1,6 +1,6 @@
 module github.com/baldaworks/promptkitty
 
-go 1.26.5
+go 1.26.10
 
 require (
 	github.com/hupe1980/vecgo v0.0.15
