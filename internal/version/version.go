@@ -2,4 +2,4 @@
 package version
 
 // Current is the current PromptKitty release version.
-const Current = "0.4.2"
+const Current = "0.4.3"

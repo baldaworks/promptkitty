@@ -100,7 +100,7 @@ For repeated use, install the same native command globally from npm or with Go:
 ```bash
 npm install --global @baldaworks/promptkitty@latest
 # Or install with Go:
-go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.4.2
+go install github.com/baldaworks/promptkitty/cmd/promptkitty@v0.4.3
 ```
 
 The remaining examples use the installed `promptkitty` command. Assemble the selected template after supplying every declared parameter:
@@ -153,7 +153,7 @@ The reusable `cli` package keeps successful output on stdout and diagnostics on 
 Install the module:
 
 ```bash
-go get github.com/baldaworks/promptkitty@v0.4.2
+go get github.com/baldaworks/promptkitty@v0.4.3
 ```
 
 Load the embedded catalog and assemble a fully parameterized prompt:
